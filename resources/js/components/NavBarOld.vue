@@ -279,6 +279,7 @@ export default {
 
 .nav-left {
   flex-shrink: 0;
+
 }
 
 .brand {
