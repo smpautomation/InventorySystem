@@ -23,13 +23,37 @@
 
 <script>
 import NavBarOld from '@/components/NavBarOld.vue'
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, LineElement, PointElement, CategoryScale, LinearScale } from 'chart.js'
+import { Bar } from 'vue-chartjs'
+import {
+    Chart as ChartJS,
+    Title,
+    Tooltip,
+    Legend,
+    BarElement,
+    BarController,
+    LineElement,
+    LineController,
+    PointElement,
+    CategoryScale,
+    LinearScale
+} from 'chart.js'
 import { Chart } from 'vue-chartjs'
 import ChartHeader from './ChartHeader.vue'
 import SummaryCards from './SummaryCards.vue'
 import { buildChartData, buildChartOptions, buildMonthlySummaries } from './chartHelpers'
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend)
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    BarController,
+    LineElement,
+    LineController,
+    PointElement,
+    Title,
+    Tooltip,
+    Legend
+)
 
 export default {
   name: 'PlantOutputChart',
