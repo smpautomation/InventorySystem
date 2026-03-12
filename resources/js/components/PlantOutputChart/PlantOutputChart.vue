@@ -29,7 +29,6 @@ import {
     Title,
     Tooltip,
     Legend,
-    Bar,
     BarElement,
     BarController,
     LineElement,
@@ -46,7 +45,6 @@ import { buildChartData, buildChartOptions, buildMonthlySummaries } from './char
 ChartJS.register(
     CategoryScale,
     LinearScale,
-    Bar,
     BarElement,
     BarController,
     LineElement,
