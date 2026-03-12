@@ -15,7 +15,7 @@
 
     <div class="chart-container">
       <div v-if="isEmpty" class="chart-empty">No data available</div>
-      <Bar v-else :data="chartData" :options="chartOptions" />
+      <Chart type="bar" v-else :data="chartData" :options="chartOptions" />
     </div>
     <SummaryCards :summaries="monthlySummaries" />
   </div>
