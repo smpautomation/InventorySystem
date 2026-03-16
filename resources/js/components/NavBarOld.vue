@@ -136,7 +136,7 @@
               <Link href="/summary/pieces/ncp2" class="submenu-item">QA NCP2</Link>
               <Link href="/summary/pieces/ncp3" class="submenu-item">QA NCP3</Link>
               <Link href="/summary/pieces/ncp8" class="submenu-item">QA NCP8</Link>
-              <Link href="/summary/pieces/inoganic" class="submenu-item">QA Inorganic</Link>
+              <Link href="/summary/pieces/inorganic" class="submenu-item">QA Inorganic</Link>
               <Link href="/summary/pieces/epoxy" class="submenu-item">QA Epoxy</Link>
               <Link href="/summary/pieces/chiptype" class="submenu-item">QA Chiptype</Link>
               <Link href="/summary/pieces/p10epoxy" class="submenu-item">QA P10 Epoxy</Link>
