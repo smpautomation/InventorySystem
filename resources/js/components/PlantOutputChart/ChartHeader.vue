@@ -57,6 +57,7 @@
                         v-model.number="form[index].target"
                         type="number"
                         min="0"
+                        step="0.01"
                         class="target-input"
                         placeholder="Target"
                     />
@@ -67,6 +68,7 @@
                         v-model.number="form[index].working_days"
                         type="number"
                         min="0"
+                        step="0.01"
                         class="target-input"
                         style="width: 70px"
                         placeholder="Days"

@@ -107,8 +107,8 @@ class PlantOutputController extends Controller
                     'year'  => (int) $row['year'],
                 ],
                 [
-                    'target'       => (int) $row['target'],
-                    'working_days' => (int) ($row['working_days'] ?? 0),
+                    'target'       => (float) $row['target'],
+                    'working_days' => (float) ($row['working_days'] ?? 0),
                 ]
             );
         }

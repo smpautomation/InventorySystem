@@ -126,6 +126,23 @@
             </div>
           </div>
 
+          <div class="submenu-wrapper">
+            <button class="menu-item-alt submenu-toggle" @click="togglePiecesReports">
+              <span class="item-icon">⚙️</span>
+              <span>Output Per Pieces</span>
+              <span class="submenu-arrow" :class="{ 'is-open': piecesReportsOpen }">▶</span>
+            </button>
+            <div class="submenu" :class="{ 'is-open': piecesReportsOpen }">
+              <Link href="/summary/pieces/ncp2" class="submenu-item">QA NCP2</Link>
+              <Link href="/summary/pieces/ncp3" class="submenu-item">QA NCP3</Link>
+              <Link href="/summary/pieces/ncp8" class="submenu-item">QA NCP8</Link>
+              <Link href="/summary/pieces/inoganic" class="submenu-item">QA Inorganic</Link>
+              <Link href="/summary/pieces/epoxy" class="submenu-item">QA Epoxy</Link>
+              <Link href="/summary/pieces/chiptype" class="submenu-item">QA Chiptype</Link>
+              <Link href="/summary/pieces/p10epoxy" class="submenu-item">QA P10 Epoxy</Link>
+            </div>
+          </div>
+
 
           <a href="http://172.17.2.235/inventory/summary_received.php" class="menu-item-alt">Received</a>
           <a href="http://172.17.2.235/inventory/summary_received_total.php" class="menu-item-alt">Received Total</a>
@@ -192,6 +209,7 @@ export default {
       processReportsOpen: false,
       inventoryReportsOpen: false,
       tonsReportsOpen: false,
+      piecesReportsOpen: false,
     }
   },
   mounted() {
@@ -241,6 +259,9 @@ export default {
     },
     toggleTonsReports() {
       this.tonsReportsOpen = !this.tonsReportsOpen
+    },
+    togglePiecesReports() {
+      this.piecesReportsOpen = !this.piecesReportsOpen
     },
     async fetchIpLocation() {
       try {

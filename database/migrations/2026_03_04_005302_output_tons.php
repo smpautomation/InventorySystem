@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('plant');
             $table->string('month');
             $table->string('year');
-            $table->smallInteger('target');
-            $table->tinyInteger('working_days');
+            $table->float('target');
+            $table->float('working_days');
         });
     }
 
