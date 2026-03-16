@@ -24,8 +24,8 @@ interface MonthTarget {
 
 // ── Constants ──────────────────────────────────────────────────
 const CACHE_PREFIX:   string = 'plant_output:'
-const TTL_CURRENT_MS: number = 60 * 60 * 1000 *0// 1 hour
-const TTL_PAST_MS:    number = 7 * 24 * 60 * 60 * 1000  *0// 1 week
+const TTL_CURRENT_MS: number = 60 * 60 * 1000 // 1 hour
+const TTL_PAST_MS:    number = 7 * 24 * 60 * 60 * 1000  // 1 week
 
 // ── Helpers ────────────────────────────────────────────────────
 function getCacheKey(plant: string, year: number, month: number): string {

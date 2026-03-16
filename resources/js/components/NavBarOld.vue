@@ -140,6 +140,7 @@
               <Link href="/summary/pieces/epoxy" class="submenu-item">QA Epoxy</Link>
               <Link href="/summary/pieces/chiptype" class="submenu-item">QA Chiptype</Link>
               <Link href="/summary/pieces/p10epoxy" class="submenu-item">QA P10 Epoxy</Link>
+              <Link href="/summary/pieces/vcm" class="submenu-item">QA VCM</Link>
             </div>
           </div>
 

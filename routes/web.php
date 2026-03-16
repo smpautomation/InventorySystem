@@ -68,6 +68,9 @@ Route::get('/summary/pieces/ncp8', function () {
 Route::get('/summary/pieces/p10epoxy', function () {
     return Inertia::render('Summary/Pieces/P10EPOXY');
 })->name('summary.pieces.p10epoxy');
+Route::get('/summary/pieces/vcm', function () {
+    return Inertia::render('Summary/Pieces/VCM');
+})->name('summary.pieces.vcm');
 
 
 

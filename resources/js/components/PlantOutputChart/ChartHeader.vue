@@ -8,9 +8,9 @@
     </div>
     <div class="header-right">
       <div class="header-top-row">
-        <button class="edit-target-btn" @click="openModal">
-          <span class="btn-icon">✏️</span>
-          <span class="btn-text">Edit Targets</span>
+        <button v-if="canEditTargets" class="edit-target-btn" @click="openModal">
+        <span class="btn-icon">✏️</span>
+        <span class="btn-text">Edit Targets</span>
         </button>
         <div class="month-badge">
           <span class="month-label">{{ currentMonthLabel }}</span>
@@ -124,13 +124,27 @@ export default {
       saveError:    null,
       selectedYear: new Date().getFullYear(),
       form:         [],
+      ipData:       null,
     }
+  },
+
+  async mounted() {
+        try {
+            const res  = await fetch('/api/ip-details')
+            const data = await res.json()
+            this.ipData = data
+        } catch {
+            this.ipData = null
+        }
   },
 
   computed: {
     yearOptions() {
       const y = new Date().getFullYear()
       return [y - 1, y, y + 1]
+    },
+    canEditTargets() {
+        return this.ipData?.location === 'AUTOMATION'
     },
   },
 
