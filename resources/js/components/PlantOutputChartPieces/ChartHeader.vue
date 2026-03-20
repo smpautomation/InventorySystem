@@ -16,6 +16,30 @@
           <span class="month-label">{{ currentMonthLabel }}</span>
           <span class="day-indicator">Day {{ today }} of {{ daysInMonth }}</span>
         </div>
+        <div class="date-range-wrap">
+            <input
+                type="date"
+                v-model="dateFrom"
+                class="date-input"
+                :max="dateTo || todayStr"
+                @change="emitDateRange"
+            />
+            <span class="date-sep">→</span>
+            <input
+                type="date"
+                v-model="dateTo"
+                class="date-input"
+                :min="dateFrom"
+                :max="todayStr"
+                @change="emitDateRange"
+            />
+            <button
+                v-if="dateFrom || dateTo"
+                class="date-clear-btn"
+                @click="clearDateRange"
+                title="Reset to default"
+            >✕</button>
+        </div>
       </div>
       <div class="legend-row">
         <div v-for="ds in datasets" :key="ds.label" class="legend-item">
@@ -111,7 +135,7 @@ export default {
     targets:           { type: Object, default: () => ({}) },
   },
 
-  emits: ['targets-updated'],
+  emits: ['targets-updated', 'date-range-changed'],
 
   data() {
     const currentYear = new Date().getFullYear()
@@ -123,6 +147,8 @@ export default {
       selectedYear: new Date().getFullYear(),
       form:         [],
       ipData:       null,
+      dateFrom: '',
+      dateTo:   '',
     }
   },
 
@@ -143,6 +169,9 @@ export default {
     },
     canEditTargets() {
         return this.ipData?.location == 'AUTOMATION'
+    },
+    todayStr() {
+        return new Date().toISOString().split('T')[0]  // "2026-03-21"
     },
   },
 
@@ -224,6 +253,19 @@ export default {
 
     csrfToken() {
       return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? ''
+    },
+
+    emitDateRange() {
+        this.$emit('date-range-changed', {
+            from: this.dateFrom || null,
+            to:   this.dateTo   || null,
+        })
+    },
+
+    clearDateRange() {
+        this.dateFrom = ''
+        this.dateTo   = ''
+        this.$emit('date-range-changed', { from: null, to: null })
     },
   }
 }
@@ -410,6 +452,43 @@ export default {
 }
 .btn-save:disabled {
     opacity: 0.5; cursor: not-allowed;
+}
+.date-range-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.date-input {
+    background: #0d1b2a;
+    border: 1px solid rgba(43,130,203,0.25);
+    border-radius: 6px;
+    padding: 0.4rem 0.6rem;
+    color: #e8f0f7;
+    font-size: 0.8rem;
+    cursor: pointer;
+    colorscheme: dark;
+}
+.date-input:focus {
+    outline: none;
+    border-color: rgba(43,130,203,0.5);
+}
+.date-sep {
+    color: #8899aa;
+    font-size: 0.8rem;
+}
+.date-clear-btn {
+    background: rgba(229,62,62,0.15);
+    border: 1px solid rgba(229,62,62,0.3);
+    border-radius: 6px;
+    padding: 0.35rem 0.6rem;
+    color: #fc8181;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.date-clear-btn:hover {
+    background: rgba(229,62,62,0.25);
 }
 @media (max-width: 768px) {
   .chart-header { flex-direction: column; }

@@ -11,6 +11,7 @@
       :plant="plant"
       :targets="targets"
       @targets-updated="$emit('targets-updated')"
+      @date-range-changed="onDateRangeChanged"
     />
 
     <div class="chart-container">
@@ -56,6 +57,11 @@ ChartJS.register(
 )
 
 export default {
+  data() {
+    return {
+        dateRange: { from: null, to: null }
+    }
+  },
   name: 'PlantOutputChart',
   components: { Chart, ChartHeader, SummaryCards, NavBarOld },
   props: {
@@ -81,7 +87,9 @@ export default {
             this.today,
             this.dayLabels,
             this.targets,
-            this.currentMonthName
+            this.currentMonthName,
+            this.dateRange,
+            this.allMonths,
         )
     },
     chartOptions()      { return buildChartOptions() },
@@ -95,6 +103,11 @@ export default {
             areas => !areas || Object.keys(areas).length === 0
         )
     },
+  },
+  methods: {
+    onDateRangeChanged(range) {
+        this.dateRange = range
+    }
   }
 }
 </script>

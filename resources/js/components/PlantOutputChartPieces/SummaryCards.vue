@@ -33,6 +33,17 @@
             <span class="target-label">/ {{ m.working_days }} days</span>
         </span>
       </div>
+      <div v-if="m.isCurrent && m.yesterdayTotal !== null" class="target-row">
+        <span class="target-label">Yesterday</span>
+        <span class="target-val">{{ Number(m.yesterdayTotal).toFixed(2) }} t</span>
+        <span
+            v-if="m.dailyTarget > 0"
+            class="target-pct"
+            :class="m.yesterdayTotal >= m.dailyTarget ? 'pct-good' : 'pct-low'"
+        >
+            {{ ((m.yesterdayTotal / m.dailyTarget) * 100).toFixed(1) }}%
+        </span>
+      </div>
     </div>
   </div>
 </template>
