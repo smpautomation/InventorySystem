@@ -2,7 +2,7 @@
   <nav class="navbar-alt1">
     <div class="nav-container">
       <div class="nav-left">
-        <a href="/" class="brand">
+        <a href="http://172.17.2.235/inventory" class="brand">
           <img src="/images/is2.png" alt="Logo" class="logo" title="Inventory System"/>
           <span class="brand-text">Inventory System</span>
         </a>
