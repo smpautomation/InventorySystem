@@ -14,3 +14,5 @@ Route::get('/ip-details', [IpAddressController::class, 'getIpDetails']);
 Route::get('/plant-output/{plant}', [PlantOutputController::class, 'index']);
 Route::get('/plant-target/{plant}', [PlantOutputController::class, 'targets']);
 Route::post('/plant-target/{plant}', [PlantOutputController::class, 'storeTargets']);
+Route::get('/plant-daily-target/{plant}',  [PlantOutputController::class, 'dailyTargets']);
+Route::post('/plant-daily-target/{plant}', [PlantOutputController::class, 'storeDailyTargets']);

@@ -12,19 +12,16 @@ interface PlantOutputResponse {
     data:  AreaData
 }
 
-interface CacheEntry {
-    timestamp: number
-    payload:   PlantOutputResponse
-}
-
 interface MonthTarget {
     target:       number
     working_days: number
 }
 
+type DailyTargetMap = Record<string, Record<string, number>>
+
 // ── Constants ──────────────────────────────────────────────────
 const CACHE_PREFIX:   string = 'plant_output:'
-const TTL_CURRENT_MS: number = 60 * 60 * 1000 // 1 hour
+const TTL_CURRENT_MS: number = 60 * 60 * 1000           // 1 hour
 const TTL_PAST_MS:    number = 7 * 24 * 60 * 60 * 1000  // 1 week
 
 // ── Helpers ────────────────────────────────────────────────────
@@ -33,7 +30,11 @@ function getCacheKey(plant: string, year: number, month: number): string {
 }
 
 function getTargetCacheKey(plant: string, year: number): string {
-    return `plant_targets:${plant}:${year}` //
+    return `plant_targets:${plant}:${year}`
+}
+
+function getDailyTargetCacheKey(plant: string, year: number, month: number): string {
+    return `plant_daily_targets:${plant}:${year}:${month}`
 }
 
 function isCurrent(year: number, month: number): boolean {
@@ -45,14 +46,11 @@ function readCache<T>(key: string, ttlMs: number): T | null {
     try {
         const raw = localStorage.getItem(key)
         if (!raw) return null
-
         const { timestamp, payload } = JSON.parse(raw)
-
         if (Date.now() - timestamp > ttlMs) {
             localStorage.removeItem(key)
             return null
         }
-
         return payload as T
     } catch {
         return null
@@ -88,7 +86,6 @@ export function usePlantOutput() {
         try {
             const res = await fetch(`/api/plant-output/${plant}?year=${year}&month=${month}`)
             if (!res.ok) throw new Error(`HTTP ${res.status}`)
-
             const json: PlantOutputResponse = await res.json()
             writeCache(key, json)
             return json
@@ -126,12 +123,34 @@ export function usePlantOutput() {
         try {
             const res = await fetch(`/api/plant-target/${plant}?year=${year}`)
             if (!res.ok) throw new Error(`HTTP ${res.status}`)
-
             const data: Record<string, MonthTarget> = await res.json()
             writeCache(key, data)
             return data
         } catch (e) {
             console.error('fetchTargets error:', e)
+            return {}
+        }
+    }
+
+    async function fetchDailyTargets(
+        plant: string,
+        year:  number,
+        month: number
+    ): Promise<DailyTargetMap> {
+        const key       = getDailyTargetCacheKey(plant, year, month)
+        const TTL_24HRS = 24 * 60 * 60 * 1000
+
+        const cached = readCache<DailyTargetMap>(key, TTL_24HRS)
+        if (cached && Object.keys(cached).length > 0) return cached
+
+        try {
+            const res = await fetch(`/api/plant-daily-target/${plant}?year=${year}&month=${month}`)
+            if (!res.ok) throw new Error(`HTTP ${res.status}`)
+            const data: DailyTargetMap = await res.json()
+            if (Object.keys(data).length > 0) writeCache(key, data)
+            return data
+        } catch (e) {
+            console.error('fetchDailyTargets error:', e)
             return {}
         }
     }
@@ -144,5 +163,19 @@ export function usePlantOutput() {
         localStorage.removeItem(getTargetCacheKey(plant, year))
     }
 
-    return { fetchMonth, fetchYear, fetchTargets, invalidate, invalidateTargets, loading, error }
+    function invalidateDailyTargets(plant: string, year: number, month: number): void {
+        localStorage.removeItem(getDailyTargetCacheKey(plant, year, month))
+    }
+
+    return {
+        fetchMonth,
+        fetchYear,
+        fetchTargets,
+        fetchDailyTargets,
+        invalidate,
+        invalidateTargets,
+        invalidateDailyTargets,
+        loading,
+        error,
+    }
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="summary-grid">
     <div
-      v-for="m in summaries"
+      v-for="m in reversedSummaries"
       :key="m.month"
       class="summary-card"
       :class="{ 'summary-card-current': m.isCurrent }"
@@ -27,21 +27,24 @@
         </span>
       </div>
 
-      <div v-if="m.dailyTarget > 0" class="target-row">
+      <div v-if="m.isCurrent && m.dailyTarget > 0" class="target-row">
         <span class="target-label">Daily Target</span>
         <span class="target-val">{{ m.dailyTarget.toFixed(2) }} t
             <span class="target-label">/ {{ m.working_days }} days</span>
         </span>
       </div>
       <div v-if="m.isCurrent && m.yesterdayTotal !== null" class="target-row">
-        <span class="target-label">Yesterday</span>
-        <span class="target-val">{{ Number(m.yesterdayTotal).toFixed(2) }} t</span>
+        <span class="target-label">Yesterday's Output</span>
+        <span class="target-val">
+            {{ Number(m.yesterdayTotal).toFixed(2) }} t
+            <span class="target-label">÷ {{ m.yesterdayDailyTarget }} t</span>
+        </span>
         <span
             v-if="m.dailyTarget > 0"
             class="target-pct"
             :class="m.yesterdayTotal >= m.dailyTarget ? 'pct-good' : 'pct-low'"
         >
-            {{ ((m.yesterdayTotal / m.dailyTarget) * 100).toFixed(1) }}%
+            {{ ((m.yesterdayTotal / m.yesterdayDailyTarget) * 100).toFixed(2) }}%
         </span>
       </div>
     </div>
@@ -53,6 +56,11 @@ export default {
   name: 'SummaryCards',
   props: {
     summaries: { type: Array, required: true }
+  },
+  computed: {
+    reversedSummaries() {
+      return [...this.summaries].reverse()
+    }
   }
 }
 </script>

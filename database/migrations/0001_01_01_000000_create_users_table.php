@@ -40,9 +40,9 @@ return new class extends Migration
             $table->id();
             $table->string('ip', 45)->unique();
             $table->string('location', 50);
-            $table->string('sato_ip', 45);
-            $table->smallInteger('horizontal_offset');
-            $table->smallInteger('vertical_offset');
+            $table->string('sato_ip', 45)->nullable();
+            $table->smallInteger('horizontal_offset')->nullable();
+            $table->smallInteger('vertical_offset')->nullable();
             //$table->foreignId('role');
             $table->timestamps();
         });
