@@ -15,6 +15,19 @@
         @targets-updated="$emit('targets-updated')"
         @daily-targets-updated="$emit('daily-targets-updated')"
         @date-range-changed="onDateRangeChanged"
+        @open-print="showPrint = true"
+      />
+      <PrintPreview
+        :show="showPrint"
+        :title="title"
+        :eyebrow="eyebrow"
+        :raw-data="rawData"
+        :targets="targets"
+        :all-months="allMonths"
+        :daily-targets="dailyTargets"
+        :summaries="monthlySummaries"
+        :current-month-label="currentMonthLabel"
+        @close="showPrint = false"
       />
       <div class="chart-container">
         <div v-if="isEmpty" class="chart-empty">No data available</div>
@@ -77,6 +90,7 @@
   import ChartHeader from './ChartHeader.vue'
   import SummaryCards from './SummaryCards.vue'
   import { buildChartData, buildChartOptions, buildMonthlySummaries } from './chartHelpers'
+  import PrintPreview from './PrintPreview.vue'
 
   ChartJS.register(
       CategoryScale,
@@ -94,11 +108,12 @@
   export default {
     data() {
       return {
-        dateRange: { from: null, to: null }
+        dateRange: { from: null, to: null },
+        showPrint: false,
       }
     },
     name: 'PlantOutputChart',
-    components: { Chart, ChartHeader, SummaryCards, NavBarOld },
+    components: { Chart, ChartHeader, SummaryCards, NavBarOld,  PrintPreview},
     props: {
       title:         { type: String, required: true },
       eyebrow:       { type: String, default: 'Monthly Output' },

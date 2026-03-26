@@ -12,6 +12,10 @@
             <span class="btn-icon">✏️</span>
             <span class="btn-text">Edit Targets</span>
           </button>
+          <button class="print-btn" @click="$emit('open-print')">
+            <span class="btn-icon">🖨️</span>
+            <span class="btn-text">Print</span>
+          </button>
           <div class="month-badge">
             <span class="month-label">{{ currentMonthLabel }}</span>
             <span class="day-indicator">Day {{ today }} of {{ daysInMonth }}</span>
@@ -200,7 +204,7 @@
       areas:             { type: Array, default: () => [] },
     },
 
-    emits: ['targets-updated', 'daily-targets-updated', 'date-range-changed'],
+    emits: ['targets-updated', 'daily-targets-updated', 'date-range-changed', 'open-print'],
 
     data() {
       const now = new Date()
@@ -575,7 +579,16 @@
     color: #fc8181; font-size: 0.75rem; cursor: pointer; transition: all 0.2s;
   }
   .date-clear-btn:hover { background: rgba(229,62,62,0.25); }
-
+  .print-btn {
+    display: flex; align-items: center; gap: 0.5rem;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px; padding: 0.4rem 0.9rem;
+    color: #e8f0f7; font-size: 0.875rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s ease;
+  }
+    .print-btn:hover {
+    background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3);
+  }
   @media (max-width: 768px) {
     .chart-header    { flex-direction: column; }
     .header-right    { align-items: flex-start; width: 100%; }

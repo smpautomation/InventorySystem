@@ -103,7 +103,7 @@ export const AREA_COLORS = [
               type:            'line',
               label:           'Avg Daily Target',
               data:            avgDailyTargetData,
-              borderColor:     '#FFFFFF',
+              borderColor:     '#F5DEB3',
               backgroundColor: 'transparent',
               borderWidth:     2,
               borderDash:      [6, 4],
