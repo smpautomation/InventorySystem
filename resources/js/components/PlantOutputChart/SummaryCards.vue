@@ -40,9 +40,9 @@
             <span class="target-label">÷ {{ m.yesterdayDailyTarget }} t</span>
         </span>
         <span
-            v-if="m.dailyTarget > 0"
+            v-if="m.yesterdayDailyTarget > 0"
             class="target-pct"
-            :class="m.yesterdayTotal >= m.dailyTarget ? 'pct-good' : 'pct-low'"
+            :class="m.yesterdayTotal >= m.yesterdayDailyTarget ? 'pct-good' : 'pct-low'"
         >
             {{ ((m.yesterdayTotal / m.yesterdayDailyTarget) * 100).toFixed(2) }}%
         </span>

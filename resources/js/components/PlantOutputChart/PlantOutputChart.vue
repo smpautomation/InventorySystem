@@ -22,12 +22,34 @@
       </div>
       <div v-if="dateRangeTotal !== null" class="date-range-summary">
         <span class="date-range-label">Total Output for Selected Range</span>
-        <span class="date-range-value">{{ dateRangeTotal.toFixed(2) }}<span class="date-range-unit">t</span></span>
+        <div class="date-range-total-wrap">
+            <span class="date-range-value">
+                {{ dateRangeTotal.total.toFixed(2) }}<span class="date-range-unit">t</span>
+            </span>
+            <span
+                v-if="dateRangeTotal.pct !== null"
+                class="date-range-pct"
+                :class="dateRangeTotal.pct >= 100 ? 'pct-good' : 'pct-low'"
+            >
+                {{ dateRangeTotal.pct.toFixed(2) }}%
+            </span>
+            <span v-if="dateRangeTotal.targetTotal > 0" class="date-range-target-label">
+                of {{ dateRangeTotal.targetTotal.toFixed(2) }}t Daily Target (Set)
+            </span>
+        </div>
         <div class="date-range-breakdown">
             <span v-for="ds in chartData.datasets.filter(d => d.type === 'bar')" :key="ds.label" class="breakdown-item">
                 <span class="breakdown-dot" :style="{ background: ds.backgroundColor }"></span>
                 <span class="breakdown-label">{{ ds.label }}</span>
                 <span class="breakdown-val">{{ ds.data.reduce((s, v) => s + (Number(v) || 0), 0).toFixed(2) }}t</span>
+                <span
+                    v-if="getAreaRangeTarget(ds.label) > 0"
+                    class="breakdown-pct"
+                    :class="ds.data.reduce((s,v) => s+(Number(v)||0), 0) >= getAreaRangeTarget(ds.label) ? 'pct-good' : 'pct-low'"
+                >
+                    {{ ((ds.data.reduce((s,v) => s+(Number(v)||0), 0) / getAreaRangeTarget(ds.label)) * 100).toFixed(1) }}%
+                </span>
+                <span class="breakdown-target">/ {{ getAreaRangeTarget(ds.label).toFixed(2) }}t</span>
             </span>
         </div>
       </div>
@@ -122,16 +144,60 @@
       },
       dateRangeTotal() {
         if (!this.dateRange.from && !this.dateRange.to) return null
+
         const datasets = this.chartData.datasets.filter(ds => ds.type === 'bar')
         const total = datasets.reduce((sum, ds) => {
             return sum + ds.data.reduce((s, v) => s + (Number(v) || 0), 0)
         }, 0)
-        return total
+
+        // Sum daily targets for the selected date range
+        const from = new Date(this.dateRange.from || new Date(new Date().getFullYear(), new Date().getMonth(), 1))
+        const to   = new Date(this.dateRange.to   || new Date())
+
+        let targetTotal = 0
+        const cursor = new Date(from)
+        cursor.setHours(0, 0, 0, 0)
+        to.setHours(23, 59, 59, 999)
+
+        while (cursor <= to) {
+            const day = String(cursor.getDate())
+            Object.entries(this.dailyTargets)
+                .filter(([area]) => area !== 'ALL')
+                .forEach(([, areaDays]) => {
+                    targetTotal += areaDays[day] !== undefined ? Number(areaDays[day]) : 0
+                })
+            cursor.setDate(cursor.getDate() + 1)
+        }
+
+        const pct = targetTotal > 0 ? (total / targetTotal) * 100 : null
+
+        return { total, targetTotal, pct }
       }
     },
     methods: {
       onDateRangeChanged(range) {
         this.dateRange = range
+      },
+      getAreaRangeTarget(areaName) {
+        if (!this.dailyTargets[areaName]) return 0
+
+        const from = new Date(this.dateRange.from || new Date(new Date().getFullYear(), new Date().getMonth(), 1))
+        const to   = new Date(this.dateRange.to   || new Date())
+
+        let total = 0
+        const cursor = new Date(from)
+        cursor.setHours(0, 0, 0, 0)
+        to.setHours(23, 59, 59, 999)
+
+        while (cursor <= to) {
+            const day = String(cursor.getDate())
+            total += this.dailyTargets[areaName][day] !== undefined
+                ? Number(this.dailyTargets[areaName][day])
+                : 0
+            cursor.setDate(cursor.getDate() + 1)
+        }
+
+        return total
       }
     }
   }
@@ -223,6 +289,39 @@
     font-weight: 600;
     color: #c8d8e8;
     font-family: 'Consolas', monospace;
+}
+.date-range-total-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+.date-range-pct {
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+.date-range-target-label {
+    font-size: 0.75rem;
+    color: #8899aa;
+}
+.pct-good {
+    background: rgba(56,161,105,0.15); color: #68d391;
+}
+.pct-low  {
+    background: rgba(229,62,62,0.12);  color: #fc8181;
+}
+.breakdown-target {
+    font-size: 0.7rem;
+    color: #8899aa;
+    font-family: 'Consolas', monospace;
+}
+.breakdown-pct {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
 }
   @media (max-width: 768px) {
     .chart-page { padding: 1rem; }

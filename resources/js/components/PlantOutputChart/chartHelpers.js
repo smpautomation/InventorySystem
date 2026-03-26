@@ -124,7 +124,7 @@ export const AREA_COLORS = [
             data:            inputDailyTargetData,
             borderColor:     '#DC143C',
             backgroundColor: 'rgba(56, 178, 172, 0.15)',
-            fill:            'origin',
+            //fill:            'origin',
             borderWidth:     2,
             borderDash:      [3, 3],
             pointRadius:     0,
