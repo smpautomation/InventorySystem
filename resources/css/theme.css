@@ -1,0 +1,85 @@
+/* ── Theme CSS Variables ── */
+/* Add this to your main app.css or app.blade.php <style> block */
+
+:root,
+[data-theme="dark"] {
+    --bg-primary:        #0d1b2a;
+    --bg-secondary:      #112240;
+    --bg-tertiary:       rgba(255, 255, 255, 0.03);
+
+    --border-primary:    rgba(255, 255, 255, 0.08);
+    --border-accent:     rgba(43, 130, 203, 0.25);
+    --border-accent-hover: rgba(43, 130, 203, 0.5);
+
+    --text-primary:      #e8f0f7;
+    --text-secondary:    #c8d8e8;
+    --text-muted:        #8899aa;
+    --text-accent:       #5ba3e0;
+
+    --accent:            #2b82cb;
+    --accent-hover:      rgba(43, 130, 203, 0.25);
+
+    --card-bg:           #112240;
+    --card-border:       rgba(255, 255, 255, 0.08);
+
+    --input-bg:          #0d1b2a;
+    --input-border:      rgba(255, 255, 255, 0.12);
+    --input-text:        #e8f0f7;
+
+    --chart-grid:        rgba(255, 255, 255, 0.04);
+    --chart-tick:        #8899aa;
+    --chart-border:      rgba(255, 255, 255, 0.08);
+
+    --navbar-bg:         #0d1b2a;
+    --navbar-border:     rgba(255, 255, 255, 0.08);
+    --navbar-item-bg:    #112240;
+
+    --shadow:            rgba(0, 0, 0, 0.3);
+    --modal-backdrop:    rgba(0, 0, 0, 0.6);
+
+    --pct-good-bg:       rgba(56, 161, 105, 0.15);
+    --pct-good-text:     #68d391;
+    --pct-low-bg:        rgba(229, 62, 62, 0.12);
+    --pct-low-text:      #fc8181;
+}
+
+[data-theme="light"] {
+    --bg-primary:        #f0f4f8;
+    --bg-secondary:      #ffffff;
+    --bg-tertiary:       rgba(0, 0, 0, 0.02);
+
+    --border-primary:    rgba(0, 0, 0, 0.08);
+    --border-accent:     rgba(43, 130, 203, 0.3);
+    --border-accent-hover: rgba(43, 130, 203, 0.6);
+
+    --text-primary:      #1a2e44;
+    --text-secondary:    #2d3e50;
+    --text-muted:        #6b7a8d;
+    --text-accent:       #2b82cb;
+
+    --accent:            #2b82cb;
+    --accent-hover:      rgba(43, 130, 203, 0.1);
+
+    --card-bg:           #ffffff;
+    --card-border:       rgba(0, 0, 0, 0.08);
+
+    --input-bg:          #f7f9fc;
+    --input-border:      rgba(0, 0, 0, 0.12);
+    --input-text:        #1a2e44;
+
+    --chart-grid:        rgba(0, 0, 0, 0.04);
+    --chart-tick:        #6b7a8d;
+    --chart-border:      rgba(0, 0, 0, 0.08);
+
+    --navbar-bg:         #1a2e44;
+    --navbar-border:     rgba(0, 0, 0, 0.1);
+    --navbar-item-bg:    #f0f6ff;
+
+    --shadow:            rgba(0, 0, 0, 0.1);
+    --modal-backdrop:    rgba(0, 0, 0, 0.4);
+
+    --pct-good-bg:       #c6f6d5;
+    --pct-good-text:     #276749;
+    --pct-low-bg:        #fed7d7;
+    --pct-low-text:      #9b2c2c;
+}

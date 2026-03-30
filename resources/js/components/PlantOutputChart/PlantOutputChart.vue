@@ -218,34 +218,36 @@
   }
   </script>
 
-  <style scoped>
-  .chart-page {
-    background: #0d1b2a;
+<style scoped>
+.chart-page {
+    background: var(--bg-primary);
     min-height: 100vh;
     padding: 1.5rem 2rem;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    color: #e8f0f7;
-  }
-  .chart-container {
-    background: #112240;
-    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--text-primary);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+.chart-container {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
     border-radius: 8px;
     padding: 1.5rem;
     height: 400px;
     margin-bottom: 1.25rem;
-  }
-  .chart-empty {
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+.chart-empty {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100%;
-    color: #8899aa;
+    color: var(--text-muted);
     font-size: 0.875rem;
     letter-spacing: 0.05em;
-  }
-  .date-range-summary {
-    background: #112240;
-    border: 1px solid rgba(43,130,203,0.3);
+}
+.date-range-summary {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-accent);
     border-radius: 8px;
     padding: 1rem 1.5rem;
     margin-bottom: 1.25rem;
@@ -253,25 +255,26 @@
     align-items: center;
     gap: 1.5rem;
     flex-wrap: wrap;
+    transition: background 0.3s ease, border-color 0.3s ease;
 }
 .date-range-label {
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: #5ba3e0;
+    color: var(--text-accent);
     flex-shrink: 0;
 }
 .date-range-value {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #e8f0f7;
+    color: var(--text-primary);
     font-family: 'Consolas', monospace;
     flex-shrink: 0;
 }
 .date-range-unit {
     font-size: 1rem;
-    color: #8899aa;
+    color: var(--text-muted);
     font-weight: 400;
 }
 .date-range-breakdown {
@@ -284,8 +287,8 @@
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.06);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
     border-radius: 4px;
     padding: 0.3rem 0.6rem;
 }
@@ -297,12 +300,12 @@
 }
 .breakdown-label {
     font-size: 0.75rem;
-    color: #8899aa;
+    color: var(--text-muted);
 }
 .breakdown-val {
     font-size: 0.75rem;
     font-weight: 600;
-    color: #c8d8e8;
+    color: var(--text-secondary);
     font-family: 'Consolas', monospace;
 }
 .date-range-total-wrap {
@@ -319,17 +322,19 @@
 }
 .date-range-target-label {
     font-size: 0.75rem;
-    color: #8899aa;
+    color: var(--text-muted);
 }
 .pct-good {
-    background: rgba(56,161,105,0.15); color: #68d391;
+    background: var(--pct-good-bg);
+    color: var(--pct-good-text);
 }
-.pct-low  {
-    background: rgba(229,62,62,0.12);  color: #fc8181;
+.pct-low {
+    background: var(--pct-low-bg);
+    color: var(--pct-low-text);
 }
 .breakdown-target {
     font-size: 0.7rem;
-    color: #8899aa;
+    color: var(--text-muted);
     font-family: 'Consolas', monospace;
 }
 .breakdown-pct {
@@ -338,8 +343,8 @@
     padding: 0.1rem 0.3rem;
     border-radius: 3px;
 }
-  @media (max-width: 768px) {
-    .chart-page { padding: 1rem; }
+@media (max-width: 768px) {
+    .chart-page      { padding: 1rem; }
     .chart-container { height: 280px; }
-  }
-  </style>
+}
+</style>
