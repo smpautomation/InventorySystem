@@ -551,7 +551,7 @@
 .item-icon { font-size: 1.25rem; min-width: 24px; }
 
 .show-more {
-    color: var(--accent);
+    color: var(--text-accent);
     font-size: 0.875rem;
     font-weight: 600;
     padding: 0.5rem 0.75rem;
@@ -560,7 +560,7 @@
     display: inline-block;
     transition: color 0.2s;
 }
-.show-more:hover { color: var(--text-accent); }
+.show-more:hover { color: var(--text-hover); }
 
 .submenu-wrapper { display: flex; flex-direction: column; }
 
