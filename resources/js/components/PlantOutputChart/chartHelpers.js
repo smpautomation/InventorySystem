@@ -270,4 +270,111 @@ export const AREA_COLORS = [
             yesterdayDailyTarget,
         }
     })
-}
+  }
+
+  export function buildAreaChartData(area, rawData, today, targets, currentMonthName, dateRange = {}, allMonths = {}, dailyTargets = {}) {
+    if (!rawData || Object.keys(rawData).length === 0) return { labels: [], datasets: [] }
+
+    const now          = new Date()
+    const currentYear  = now.getFullYear()
+    const currentMonth = now.getMonth() + 1
+
+    const fromDate = dateRange?.from
+        ? new Date(dateRange.from)
+        : new Date(currentYear, currentMonth - 1, 1)
+
+    const toDate = dateRange?.to
+        ? new Date(dateRange.to)
+        : new Date(currentYear, currentMonth - 1, today)
+
+    const labels        = []
+    const areaData      = []
+    const avgTargetData = []
+    const inputTargetData = []
+
+    const cursor = new Date(fromDate)
+    cursor.setHours(0, 0, 0, 0)
+
+    const end = new Date(toDate)
+    end.setHours(23, 59, 59, 999)
+
+    while (cursor <= end) {
+        const year  = cursor.getFullYear()
+        const month = cursor.getMonth() + 1
+        const day   = cursor.getDate()
+
+        labels.push(`${MONTH_NAMES[month - 1].slice(0, 3)} ${day}`)
+
+        const areas = month === currentMonth
+            ? (Object.values(rawData)[0] ?? {})
+            : (allMonths[month] ?? {})
+
+        const dailyValues = areas[area]
+        areaData.push(Array.isArray(dailyValues) ? Number(dailyValues[day - 1] ?? 0) : 0)
+
+        const monthTarget = targets?.[MONTH_NAMES[month - 1]]
+        avgTargetData.push(
+            monthTarget?.target && monthTarget?.working_days
+                // Divided by number of areas so each area chart shows its proportional share
+                ? Number(monthTarget.target) / Number(monthTarget.working_days) / Object.keys(Object.values(rawData)[0] ?? {}).length
+                : null
+        )
+
+        if (month === currentMonth && dailyTargets[area]) {
+            const val = dailyTargets[area][String(day)]
+            inputTargetData.push(val !== undefined ? Number(val) : null)
+        } else {
+            inputTargetData.push(null)
+        }
+
+        cursor.setDate(cursor.getDate() + 1)
+    }
+
+    const color    = AREA_COLORS[Object.keys(Object.values(rawData)[0] ?? {}).indexOf(area) % AREA_COLORS.length]
+    const datasets = [
+        {
+            type:            'bar',
+            label:           area,
+            data:            areaData,
+            backgroundColor: color,
+            borderColor:     'transparent',
+            borderRadius:    3,
+            stack:           'main',
+        },
+    ]
+
+    if (avgTargetData.some(v => v !== null)) {
+        datasets.push({
+            type:            'line',
+            label:           'Avg Daily Target',
+            data:            avgTargetData,
+            borderColor:     '#F5DEB3',
+            backgroundColor: 'transparent',
+            borderWidth:     2,
+            borderDash:      [6, 4],
+            pointRadius:     0,
+            tension:         0,
+            stack:           'targets',
+            order:           -1,
+            spanGaps:        true,
+        })
+    }
+
+    if (inputTargetData.some(v => v !== null)) {
+        datasets.push({
+            type:            'line',
+            label:           'Daily Target (Set)',
+            data:            inputTargetData,
+            borderColor:     '#DC143C',
+            backgroundColor: 'transparent',
+            borderWidth:     2,
+            borderDash:      [3, 3],
+            pointRadius:     0,
+            tension:         0,
+            order:           -1,
+            spanGaps:        true,
+        })
+    }
+
+    return { labels, datasets }
+  }

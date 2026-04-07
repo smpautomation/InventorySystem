@@ -29,10 +29,32 @@
         :current-month-label="currentMonthLabel"
         @close="showPrint = false"
       />
+
       <div class="chart-container">
         <div v-if="isEmpty" class="chart-empty">No data available</div>
         <Chart type="bar" v-else :data="chartData" :options="chartOptions" />
       </div>
+
+      <div class="area-breakdown-toggle">
+        <label class="toggle-label">
+            <input type="checkbox" v-model="showAreaBreakdown" class="toggle-checkbox" />
+            <span class="toggle-track">
+            <span class="toggle-thumb"></span>
+            </span>
+            <span class="toggle-text">
+            <span class="toggle-icon">⬡</span>
+            Show breakdown per area
+            </span>
+        </label>
+      </div>
+
+      <template v-if="showAreaBreakdown">
+        <div v-for="ac in areaCharts" :key="ac.area" class="chart-container area-chart">
+            <div class="area-chart-title">{{ ac.area }}</div>
+            <Chart type="bar" :data="ac.data" :options="chartOptions" />
+        </div>
+      </template>
+
       <div v-if="dateRangeTotal !== null" class="date-range-summary">
         <span class="date-range-label">Total Output for Selected Range</span>
         <div class="date-range-total-wrap">
@@ -89,7 +111,7 @@
   import { Chart } from 'vue-chartjs'
   import ChartHeader from './ChartHeader.vue'
   import SummaryCards from './SummaryCards.vue'
-  import { buildChartData, buildChartOptions, buildMonthlySummaries } from './chartHelpers'
+  import { buildChartData, buildChartOptions, buildMonthlySummaries, buildAreaChartData } from './chartHelpers'
   import PrintPreview from './PrintPreview.vue'
 
   ChartJS.register(
@@ -110,6 +132,7 @@
       return {
         dateRange: { from: null, to: null },
         showPrint: false,
+        showAreaBreakdown: false,
       }
     },
     name: 'PlantOutputChart',
@@ -187,7 +210,23 @@
         const pct = targetTotal > 0 ? (total / targetTotal) * 100 : null
 
         return { total, targetTotal, pct }
-      }
+      },
+      areaCharts() {
+        if (!this.showAreaBreakdown || !this.areas.length) return []
+        return this.areas.map(area => ({
+            area,
+            data: buildAreaChartData(
+            area,
+            this.rawData,
+            this.today,
+            this.targets,
+            this.currentMonthName,
+            this.dateRange,
+            this.allMonths,
+            this.dailyTargets,
+            ),
+        }))
+      },
     },
     methods: {
       onDateRangeChanged(range) {
@@ -342,6 +381,92 @@
     font-weight: 700;
     padding: 0.1rem 0.3rem;
     border-radius: 3px;
+}
+.area-breakdown-toggle {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    user-select: none;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    transition: border-color 0.2s, background 0.2s;
+}
+.toggle-label:hover {
+    border-color: var(--border-accent);
+    background: var(--accent-hover);
+}
+.toggle-checkbox {
+    display: none;
+}
+.toggle-track {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: 999px;
+    flex-shrink: 0;
+    transition: background 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+.toggle-checkbox:checked ~ .toggle-track {
+    background: rgba(43, 130, 203, 0.35);
+    border-color: var(--border-accent);
+    box-shadow: 0 0 8px rgba(43, 130, 203, 0.4);
+}
+.toggle-thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 12px;
+    height: 12px;
+    background: var(--text-muted);
+    border-radius: 50%;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.25s;
+}
+.toggle-checkbox:checked ~ .toggle-track .toggle-thumb {
+    transform: translateX(16px);
+    background: #2b82cb;
+    box-shadow: 0 0 6px rgba(43, 130, 203, 0.7);
+}
+.toggle-text {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    transition: color 0.2s;
+    text-transform: uppercase;
+}
+.toggle-label:has(.toggle-checkbox:checked) .toggle-text {
+    color: var(--text-accent);
+}
+.toggle-icon {
+    font-size: 0.7rem;
+    opacity: 0.6;
+}
+.area-chart {
+    position: relative;
+}
+.area-chart-title {
+    position: absolute;
+    top: 0.75rem;
+    left: 1.25rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-accent);
+    z-index: 1;
 }
 @media (max-width: 768px) {
     .chart-page      { padding: 1rem; }
