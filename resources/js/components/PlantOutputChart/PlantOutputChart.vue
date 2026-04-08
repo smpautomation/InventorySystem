@@ -12,10 +12,12 @@
         :targets="targets"
         :daily-targets="dailyTargets"
         :areas="areas"
+        :show-area-breakdown="showAreaBreakdown"
         @targets-updated="$emit('targets-updated')"
         @daily-targets-updated="$emit('daily-targets-updated')"
         @date-range-changed="onDateRangeChanged"
         @open-print="showPrint = true"
+        @update:showAreaBreakdown="showAreaBreakdown = $event"
       />
       <PrintPreview
         :show="showPrint"
@@ -35,18 +37,7 @@
         <Chart type="bar" v-else :data="chartData" :options="chartOptions" />
       </div>
 
-      <div class="area-breakdown-toggle">
-        <label class="toggle-label">
-            <input type="checkbox" v-model="showAreaBreakdown" class="toggle-checkbox" />
-            <span class="toggle-track">
-            <span class="toggle-thumb"></span>
-            </span>
-            <span class="toggle-text">
-            <span class="toggle-icon">⬡</span>
-            Show breakdown per area
-            </span>
-        </label>
-      </div>
+
 
       <template v-if="showAreaBreakdown">
         <div v-for="ac in areaCharts" :key="ac.area" class="chart-container area-chart">

@@ -16,10 +16,22 @@
             <span class="btn-icon">🖨️</span>
             <span class="btn-text">Print</span>
           </button>
-          <div class="month-badge">
-            <span class="month-label">{{ currentMonthLabel }}</span>
-            <span class="day-indicator">Day {{ today }} of {{ daysInMonth }}</span>
-          </div>
+          <label class="toggle-label">
+            <input
+                type="checkbox"
+                class="toggle-checkbox"
+                :checked="showAreaBreakdown"
+                @change="$emit('update:showAreaBreakdown', $event.target.checked)"
+            />
+            <span class="toggle-track">
+                <span class="toggle-thumb"></span>
+            </span>
+            <span class="toggle-text">
+                <span class="toggle-icon">⬡</span>
+                Per Area
+            </span>
+          </label>
+
           <div class="date-range-wrap">
             <input
               type="date"
@@ -43,6 +55,10 @@
               @click="clearDateRange"
               title="Reset to default"
             >✕</button>
+          </div>
+          <div class="month-badge">
+            <span class="month-label">{{ currentMonthLabel }}</span>
+            <span class="day-indicator">Day {{ today }} of {{ daysInMonth }}</span>
           </div>
         </div>
         <div class="legend-row">
@@ -202,9 +218,10 @@
       targets:           { type: Object,  default: () => ({}) },
       dailyTargets:      { type: Object,  default: () => ({}) },
       areas:             { type: Array, default: () => [] },
+      showAreaBreakdown: { type: Boolean, default: false },
     },
 
-    emits: ['targets-updated', 'daily-targets-updated', 'date-range-changed', 'open-print'],
+    emits: ['targets-updated', 'daily-targets-updated', 'date-range-changed', 'open-print', 'update:showAreaBreakdown'],
 
     data() {
       const now = new Date()
@@ -596,7 +613,68 @@
 .print-btn:hover {
     background: var(--accent-hover); border-color: var(--border-accent);
 }
-
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    user-select: none;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    padding: 0.4rem 0.9rem;
+    transition: border-color 0.2s, background 0.2s;
+}
+.toggle-label:hover {
+    border-color: var(--border-accent);
+    background: var(--accent-hover);
+}
+.toggle-checkbox { display: none; }
+.toggle-track {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: 999px;
+    flex-shrink: 0;
+    transition: background 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+.toggle-checkbox:checked ~ .toggle-track {
+    background: rgba(43, 130, 203, 0.35);
+    border-color: var(--border-accent);
+    box-shadow: 0 0 8px rgba(43, 130, 203, 0.4);
+}
+.toggle-thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 12px;
+    height: 12px;
+    background: var(--text-muted);
+    border-radius: 50%;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.25s;
+}
+.toggle-checkbox:checked ~ .toggle-track .toggle-thumb {
+    transform: translateX(16px);
+    background: #2b82cb;
+    box-shadow: 0 0 6px rgba(43, 130, 203, 0.7);
+}
+.toggle-text {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    transition: color 0.2s;
+    text-transform: uppercase;
+}
+.toggle-label:has(.toggle-checkbox:checked) .toggle-text {
+    color: var(--text-accent);
+}
+.toggle-icon { font-size: 0.7rem; opacity: 0.6; }
 @media (max-width: 768px) {
     .chart-header    { flex-direction: column; }
     .header-right    { align-items: flex-start; width: 100%; }
