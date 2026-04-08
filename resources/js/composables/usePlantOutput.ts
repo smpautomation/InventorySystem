@@ -9,7 +9,11 @@ interface PlantOutputResponse {
     plant: string
     year:  number
     month: number
-    data:  AreaData
+    data:  {
+        area:      Record<string, number[]>
+        type:      Record<string, number[]>
+        area_type: Record<string, Record<string, number[]>>
+    }
 }
 
 interface MonthTarget {
@@ -21,8 +25,8 @@ type DailyTargetMap = Record<string, Record<string, number>>
 
 // ── Constants ──────────────────────────────────────────────────
 const CACHE_PREFIX:   string = 'plant_output:'
-const TTL_CURRENT_MS: number = 60 * 60 * 1000           // 1 hour
-const TTL_PAST_MS:    number = 7 * 24 * 60 * 60 * 1000  // 1 week
+const TTL_CURRENT_MS: number = 60 * 60 * 1000 * 0           // 1 hour
+const TTL_PAST_MS:    number = 7 * 24 * 60 * 60 * 1000 * 0  // 1 week
 
 // ── Helpers ────────────────────────────────────────────────────
 function getCacheKey(plant: string, year: number, month: number): string {
@@ -65,6 +69,12 @@ function writeCache<T>(key: string, payload: T): void {
     }
 }
 
+function normalizeData(raw: any): PlantOutputResponse['data'] {
+    if (raw && 'area' in raw) return raw
+    // Old cache: flat area map
+    return { area: raw ?? {}, type: {}, area_type: {} }
+}
+
 export function usePlantOutput() {
     const loading = ref<boolean>(false)
     const error   = ref<string | null>(null)
@@ -78,7 +88,7 @@ export function usePlantOutput() {
         const ttlMs = isCurrent(year, month) ? TTL_CURRENT_MS : TTL_PAST_MS
 
         const cached = readCache<PlantOutputResponse>(key, ttlMs)
-        if (cached) return cached
+        if (cached) return { ...cached, data: normalizeData(cached.data) }
 
         loading.value = true
         error.value   = null
@@ -86,8 +96,12 @@ export function usePlantOutput() {
         try {
             const res = await fetch(`/api/plant-output/${plant}?year=${year}&month=${month}`)
             if (!res.ok) throw new Error(`HTTP ${res.status}`)
-            const json: PlantOutputResponse = await res.json()
-            writeCache(key, json)
+            const json = await res.json()
+            const normalized = {
+                ...json,
+                data: normalizeData(json.data),
+            }
+            writeCache(key, normalized)
             return json
         } catch (e) {
             console.error('fetch error:', e)
@@ -115,7 +129,7 @@ export function usePlantOutput() {
         year:  number = new Date().getFullYear()
     ): Promise<Record<string, MonthTarget>> {
         const key       = getTargetCacheKey(plant, year)
-        const TTL_24HRS = 24 * 60 * 60 * 1000
+        const TTL_24HRS = 24 * 60 * 60 * 1000 * 0
 
         const cached = readCache<Record<string, MonthTarget>>(key, TTL_24HRS)
         if (cached) return cached
@@ -138,7 +152,7 @@ export function usePlantOutput() {
         month: number
     ): Promise<DailyTargetMap> {
         const key       = getDailyTargetCacheKey(plant, year, month)
-        const TTL_24HRS = 24 * 60 * 60 * 1000
+        const TTL_24HRS = 24 * 60 * 60 * 1000 * 0
 
         const cached = readCache<DailyTargetMap>(key, TTL_24HRS)
         if (cached && Object.keys(cached).length > 0) return cached

@@ -13,11 +13,13 @@
         :daily-targets="dailyTargets"
         :areas="areas"
         :show-area-breakdown="showAreaBreakdown"
+        :show-by-type="showByType"
         @targets-updated="$emit('targets-updated')"
         @daily-targets-updated="$emit('daily-targets-updated')"
         @date-range-changed="onDateRangeChanged"
         @open-print="showPrint = true"
         @update:showAreaBreakdown="showAreaBreakdown = $event"
+        @update:showByType="showByType = $event"
       />
       <PrintPreview
         :show="showPrint"
@@ -124,6 +126,7 @@
         dateRange: { from: null, to: null },
         showPrint: false,
         showAreaBreakdown: false,
+        showByType: false,
       }
     },
     name: 'PlantOutputChart',
@@ -146,18 +149,6 @@
       currentMonthName() {
         return new Date().toLocaleDateString('en-US', { month: 'long' })
       },
-      chartData() {
-        return buildChartData(
-          this.rawData,
-          this.today,
-          this.dayLabels,
-          this.targets,
-          this.currentMonthName,
-          this.dateRange,
-          this.allMonths,
-          this.dailyTargets,
-        )
-      },
       chartOptions()     { return buildChartOptions() },
       monthlySummaries() {
         return buildMonthlySummaries(this.rawData, this.targets, this.allMonths, this.dailyTargets)
@@ -167,9 +158,6 @@
         return Object.values(this.rawData).every(
           areas => !areas || Object.keys(areas).length === 0
         )
-      },
-      areas() {
-        return Object.keys(Object.values(this.rawData)[0] ?? {})
       },
       dateRangeTotal() {
         if (!this.dateRange.from && !this.dateRange.to) return null
@@ -215,6 +203,102 @@
             this.dateRange,
             this.allMonths,
             this.dailyTargets,
+            ),
+        }))
+      },
+      areas() {
+        return Object.keys(Object.values(this.rawData)[0] ?? {})
+      },
+      chartData() {
+        return buildChartData(
+          this.rawData,
+          this.today,
+          this.dayLabels,
+          this.targets,
+          this.currentMonthName,
+          this.dateRange,
+          this.allMonths,
+          this.dailyTargets,
+        )
+      },
+      // Resolves the correct slice of data depending on active groupBy mode.
+      // rawData shape from API: { MAIN: { area: {...}, type: {...}, area_type: {...} } }
+      activeRawData() {
+        const plantData = Object.values(this.rawData)[0]
+        if (!plantData) return {}
+        const plantKey = Object.keys(this.rawData)[0]
+
+        if (this.showByType) {
+            return { [plantKey]: plantData.type ?? {} }
+        }
+        return { [plantKey]: plantData.area ?? plantData }
+      },
+
+      // allMonths shape: { [month]: { area: {...}, type: {...}, area_type: {...} } }
+      // Falls back to treating the month value as a flat area map for old cache entries.
+      activeAllMonths() {
+        if (!this.allMonths) return {}
+        const result = {}
+        Object.entries(this.allMonths).forEach(([month, data]) => {
+            if (this.showByType) {
+                result[month] = data?.type ?? {}
+            } else {
+                result[month] = data?.area ?? data
+            }
+        })
+        return result
+      },
+
+      // area_type slice for per-area charts when groupBy is type
+      activeAllMonthsAreaType() {
+        if (!this.allMonths) return {}
+        const result = {}
+        Object.entries(this.allMonths).forEach(([month, data]) => {
+            result[month] = data?.area_type ?? {}
+        })
+        return result
+      },
+
+      activeRawDataAreaType() {
+        const plantData = Object.values(this.rawData)[0]
+        if (!plantData) return {}
+        const plantKey = Object.keys(this.rawData)[0]
+        return { [plantKey]: plantData.area_type ?? {} }
+      },
+
+      chartData() {
+        return buildChartData(
+            this.activeRawData,
+            this.today,
+            this.dayLabels,
+            this.targets,
+            this.currentMonthName,
+            this.dateRange,
+            this.activeAllMonths,
+            this.dailyTargets,
+            this.showByType ? 'type' : 'area',
+        )
+      },
+
+      areas() {
+        const plantData = Object.values(this.rawData)[0]
+        return Object.keys(plantData?.area ?? plantData ?? {})
+      },
+
+      areaCharts() {
+        if (!this.showAreaBreakdown || !this.areas.length) return []
+        return this.areas.map(area => ({
+            area,
+            data: buildAreaChartData(
+                area,
+                this.showByType ? this.activeRawDataAreaType : this.activeRawData,
+                this.today,
+                this.targets,
+                this.currentMonthName,
+                this.dateRange,
+                this.showByType ? this.activeAllMonthsAreaType : this.activeAllMonths,
+                this.dailyTargets,
+                this.showByType ? 'type' : 'area',
             ),
         }))
       },

@@ -31,7 +31,21 @@
                 Per Area
             </span>
           </label>
-
+          <label class="toggle-label">
+            <input
+                type="checkbox"
+                class="toggle-checkbox"
+                :checked="showByType"
+                @change="$emit('update:showByType', $event.target.checked)"
+            />
+            <span class="toggle-track">
+                <span class="toggle-thumb"></span>
+            </span>
+            <span class="toggle-text">
+                <span class="toggle-icon">◈</span>
+                By Type
+            </span>
+          </label>
           <div class="date-range-wrap">
             <input
               type="date"
@@ -219,9 +233,10 @@
       dailyTargets:      { type: Object,  default: () => ({}) },
       areas:             { type: Array, default: () => [] },
       showAreaBreakdown: { type: Boolean, default: false },
+      showByType: { type: Boolean, default: false },
     },
 
-    emits: ['targets-updated', 'daily-targets-updated', 'date-range-changed', 'open-print', 'update:showAreaBreakdown'],
+    emits: ['targets-updated', 'daily-targets-updated', 'date-range-changed', 'open-print', 'update:showAreaBreakdown', 'update:showByType'],
 
     data() {
       const now = new Date()
