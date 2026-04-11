@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 class PlantOutputController extends Controller
 {
-    private string $apiBase = 'http://172.17.2.235/inventory/api/tons_output.php';
+    private string $apiBase = 'http://172.17.2.236/inventory/api/tons_output.php';
     public function index(Request $request, string $plant)
     {
         $now          = now();
