@@ -15,8 +15,10 @@
   import { ref, onMounted, onUnmounted } from 'vue'
   import PlantOutputChart from '@/components/PlantOutputChart/PlantOutputChart.vue'
   import { usePlantOutput } from '@/composables/usePlantOutput'
+  import AppLayout from '@/Layouts/AppLayout.vue'
 
   export default {
+    layout: AppLayout,
     name: 'Main Plant',
     components: { PlantOutputChart },
     setup() {

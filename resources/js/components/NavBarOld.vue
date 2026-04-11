@@ -124,6 +124,7 @@
                   <a href="http://172.17.2.235/inventory/summary_inventory.php" class="submenu-item">Inventory Per Area</a>
                   <a href="http://172.17.2.235/inventory/summary_inventory_template.php" class="submenu-item">Inventory Process Template Per Area</a>
                   <a href="http://172.17.2.235/inventory/summary_inventory_next_process.php" class="submenu-item">Next Process Inventory</a>
+                  <Link href="/summary/inventory/" class="submenu-item">Daily W.I.P Per Process</Link>
               </div>
             </div>
 

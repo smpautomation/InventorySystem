@@ -1,5 +1,4 @@
 <template>
-    <NavBarOld />
     <div class="chart-page">
       <ChartHeader
         :title="title"
@@ -86,7 +85,6 @@
   </template>
 
   <script>
-  import NavBarOld from '@/components/NavBarOld.vue'
   import { Bar } from 'vue-chartjs'
   import {
       Chart as ChartJS,
@@ -130,7 +128,7 @@
       }
     },
     name: 'PlantOutputChart',
-    components: { Chart, ChartHeader, SummaryCards, NavBarOld,  PrintPreview},
+    components: { Chart, ChartHeader, SummaryCards, PrintPreview},
     props: {
       title:         { type: String, required: true },
       eyebrow:       { type: String, default: 'Monthly Output' },

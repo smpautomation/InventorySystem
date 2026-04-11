@@ -21,6 +21,11 @@ Route::get('/scan/route', function () {
     return Inertia::render('Scan/Route');
 })->name('scan.route');
 
+
+Route::get('/summary/inventory', function () {
+    return Inertia::render('Summary/Inventory');
+})->name('summary.inventory');
+
 Route::get('/summary/tons/main', function () {
     return Inertia::render('Summary/Tons/Main');
 })->name('summary.tons.main');
