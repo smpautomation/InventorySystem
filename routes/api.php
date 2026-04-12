@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\InventoryWipController;
 use App\Http\Controllers\IpAddressController;
 use App\Http\Controllers\PlantOutputController;
 use Illuminate\Http\Request;
@@ -16,3 +17,6 @@ Route::get('/plant-target/{plant}', [PlantOutputController::class, 'targets']);
 Route::post('/plant-target/{plant}', [PlantOutputController::class, 'storeTargets']);
 Route::get('/plant-daily-target/{plant}',  [PlantOutputController::class, 'dailyTargets']);
 Route::post('/plant-daily-target/{plant}', [PlantOutputController::class, 'storeDailyTargets']);
+
+Route::get('/inventory-wip/init',  [InventoryWipController::class, 'init']);
+Route::post('/inventory-wip/getWIP', [InventoryWipController::class, 'getWIP']);
