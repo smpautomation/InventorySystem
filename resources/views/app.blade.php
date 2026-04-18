@@ -33,7 +33,7 @@
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
         <link rel="icon" href="/is2.ico" sizes="any">
-        <link rel="icon" href="/is2.svg" type="image/svg+xml">
+        {{-- <link rel="icon" href="/is2.svg" type="image/svg+xml"> --}}
         <link rel="is2" href="/images/is2.png">
 
         {{-- <link rel="preconnect" href="https://fonts.bunny.net">

@@ -175,13 +175,26 @@
               </div>
             </div>
 
-            <a href="http://172.17.2.235/inventory/summary_received.php" class="menu-item-alt">Received</a>
-            <a href="http://172.17.2.235/inventory/summary_received_total.php" class="menu-item-alt">Received Total</a>
+            <div class="submenu-wrapper">
+              <button class="menu-item-alt submenu-toggle" @click="toggleWIPReports">
+                <span class="item-icon">⚙️</span>
+                <span>Daily W.I.P</span>
+                <span class="submenu-arrow" :class="{ 'is-open': wipReportsOpen }">▶</span>
+              </button>
+              <div class="submenu" :class="{ 'is-open': wipReportsOpen }">
+                <Link href="/summary/inventory/main" class="submenu-item">Main</Link>
+                <Link href="/summary/inventory/plant7" class="submenu-item">Plant 7</Link>
+                <Link href="/summary/inventory/plant8-1st" class="submenu-item">Plant 8 1st</Link>
+                <Link href="/summary/inventory/plant8-2nd" class="submenu-item">Plant 8 2nd</Link>
+              </div>
+            </div>
 
             <a href="#" class="show-more" @click.prevent="toggleSummaryExpand">
-              {{ summaryExpanded ? 'Show Less' : `+${9} More Reports` }}
+              {{ summaryExpanded ? 'Show Less' : `+${11} More Reports` }}
             </a>
             <template v-if="summaryExpanded">
+              <a href="http://172.17.2.235/inventory/summary_received.php" class="menu-item-alt">Received</a>
+              <a href="http://172.17.2.235/inventory/summary_received_total.php" class="menu-item-alt">Received Total</a>
               <a href="http://172.17.2.235/inventory/summary_split" class="menu-item-alt">Split Summary</a>
               <a href="http://172.17.2.235/inventory/summary_warehouse.php" class="menu-item-alt">Temporary Item Search</a>
               <a href="http://172.17.2.235/inventory/washing_out.php" class="menu-item-alt">Washing Inventory For Endorsed To Inspection</a>
@@ -246,6 +259,7 @@
         inventoryReportsOpen: false,
         tonsReportsOpen: false,
         piecesReportsOpen: false,
+        wipReportsOpen: false,
       }
     },
     mounted() {
@@ -271,13 +285,14 @@
         form.submit()
         this.searchQuery = ''
       },
-      toggleMenu()            { this.isMenuOpen           = !this.isMenuOpen },
+      toggleMenu()            { this.isMenuOpen            = !this.isMenuOpen },
       toggleSummaryExpand()   { this.summaryExpanded       = !this.summaryExpanded },
       toggleOptionsExpand()   { this.optionsExpanded       = !this.optionsExpanded },
       toggleProcessReports()  { this.processReportsOpen    = !this.processReportsOpen },
       toggleInventoryReports(){ this.inventoryReportsOpen  = !this.inventoryReportsOpen },
       toggleTonsReports()     { this.tonsReportsOpen       = !this.tonsReportsOpen },
       togglePiecesReports()   { this.piecesReportsOpen     = !this.piecesReportsOpen },
+      toggleWIPReports()      { this.wipReportsOpen        = !this.wipReportsOpen },
       async fetchIpLocation() {
         try {
           const response = await fetch('/api/ip-details')

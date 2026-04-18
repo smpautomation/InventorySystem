@@ -22,9 +22,18 @@ Route::get('/scan/route', function () {
 })->name('scan.route');
 
 
-Route::get('/summary/inventory', function () {
-    return Inertia::render('Summary/Inventory');
-})->name('summary.inventory');
+Route::get('/summary/inventory/main', function () {
+    return Inertia::render('Summary/Inventory/Main');
+})->name('summary.inventory.main');
+Route::get('/summary/inventory/plant7', function () {
+    return Inertia::render('Summary/Inventory/Plant7');
+})->name('summary.inventory.plant7');
+Route::get('/summary/inventory/plant8-1st', function () {
+    return Inertia::render('Summary/Inventory/Plant8-1st');
+})->name('summary.inventory.plant8-1st');
+Route::get('/summary/inventory/plant8-2nd', function () {
+    return Inertia::render('Summary/Inventory/Plant8-2nd');
+})->name('summary.inventory.plant8-2nd');
 
 Route::get('/summary/tons/main', function () {
     return Inertia::render('Summary/Tons/Main');

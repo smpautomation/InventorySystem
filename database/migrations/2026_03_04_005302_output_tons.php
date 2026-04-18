@@ -35,7 +35,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('monthly_target_tons');
-        Schema::dropIfExists('daily_target_tons');
+        // Schema::dropIfExists('monthly_target_tons');
+        // Schema::dropIfExists('daily_target_tons');
     }
 };
