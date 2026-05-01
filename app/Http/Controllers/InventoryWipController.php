@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class InventoryWipController extends Controller
 {
-    private string $apiBase = 'http://172.17.2.236/inventory/api/inventory_wip.php';
+    private string $apiBase = 'http://172.17.2.235/inventory/api/inventory_wip.php';
 
     private function externalPlantName(string $plant): string
     {
