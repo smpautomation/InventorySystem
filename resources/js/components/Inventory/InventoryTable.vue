@@ -1,88 +1,88 @@
 <template>
     <div>
-      <!-- Summary bar -->
-      <div class="results-summary-bar">
-        <div class="rsb-item">
-          <span class="rsb-label">Processes</span>
-          <span class="rsb-value">{{ uniqueProcessCount }}</span>
+        <!-- Summary bar -->
+        <div class="results-summary-bar">
+            <div class="rsb-item">
+                <span class="rsb-label">Processes</span>
+                <span class="rsb-value">{{ uniqueProcessCount }}</span>
+            </div>
+            <div class="rsb-divider"></div>
+            <div class="rsb-item">
+                <span class="rsb-label">Total Weight</span>
+                <span class="rsb-value">{{ grandTotal }}<span class="rsb-unit">t</span></span>
+            </div>
+            <div class="rsb-divider"></div>
+            <div class="rsb-item">
+                <span class="rsb-label">Total Work Orders</span>
+                <span class="rsb-value">{{ totalWorkOrders }}</span>
+            </div>
         </div>
-        <div class="rsb-divider"></div>
-        <div class="rsb-item">
-          <span class="rsb-label">Total Weight</span>
-          <span class="rsb-value">{{ grandTotal }}<span class="rsb-unit">t</span></span>
-        </div>
-        <div class="rsb-divider"></div>
-        <div class="rsb-item">
-          <span class="rsb-label">Total Work Orders</span>
-          <span class="rsb-value">{{ totalWorkOrders }}</span>
-        </div>
-      </div>
 
-      <!-- Table -->
-      <div class="table-wrap">
-        <table class="results-table">
-          <thead>
-            <tr>
-              <th>Process</th>
-              <th>Area</th>
-              <th class="num-col">Work Orders</th>
-              <th class="num-col">Weight (t)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <template v-for="(rows, process) in groupedByProcess" :key="process">
-              <tr v-for="(row, rowIndex) in rows" :key="row.area" class="data-row">
-                <td>
-                  <span v-if="rowIndex === 0" class="process-badge">{{ process }}</span>
-                </td>
-                <td><span class="area-badge">{{ row.area }}</span></td>
-                <td class="mono num-col">{{ row.work_order_count }}</td>
-                <td class="mono num-col">{{ Number(row.tons).toFixed(6) }}</td>
-              </tr>
-              <tr class="subtotal-row">
-                <td class="subtotal-label">↳ {{ process }}</td>
-                <td class="subtotal-areas">{{ rows.length }} area{{ rows.length > 1 ? 's' : '' }}</td>
-                <td class="mono num-col subtotal-val">{{ rows.reduce((s, r) => s + Number(r.work_order_count), 0) }}</td>
-                <td class="mono num-col subtotal-val">{{ rows.reduce((s, r) => s + Number(r.tons), 0).toFixed(6) }}t</td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
-      </div>
+        <!-- Table -->
+        <div class="table-wrap">
+            <table class="results-table">
+                <thead>
+                    <tr>
+                    <th>Process</th>
+                    <th>Area</th>
+                    <th class="num-col">Work Orders</th>
+                    <th class="num-col">Weight (t)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template v-for="(rows, process) in groupedByProcess" :key="process">
+                        <tr v-for="(row, rowIndex) in rows" :key="row.area" class="data-row">
+                            <td>
+                            <span v-if="rowIndex === 0" class="process-badge">{{ process }}</span>
+                            </td>
+                            <td><span class="area-badge">{{ row.area }}</span></td>
+                            <td class="mono num-col">{{ row.work_order_count }}</td>
+                            <td class="mono num-col">{{ Number(row.tons).toFixed(6) }}</td>
+                        </tr>
+                        <tr class="subtotal-row">
+                            <td class="subtotal-label">↳ {{ process }}</td>
+                            <td class="subtotal-areas">{{ rows.length }} area{{ rows.length > 1 ? 's' : '' }}</td>
+                            <td class="mono num-col subtotal-val">{{ rows.reduce((s, r) => s + Number(r.work_order_count), 0) }}</td>
+                            <td class="mono num-col subtotal-val">{{ rows.reduce((s, r) => s + Number(r.tons), 0).toFixed(6) }}t</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
     </div>
-  </template>
+</template>
 
-  <script>
-  export default {
-    name: 'InventoryTable',
+<script>
+    export default {
+        name: 'InventoryTable',
 
-    props: {
-      results: { type: Array, default: () => [] },
-    },
+        props: {
+        results: { type: Array, default: () => [] },
+        },
 
-    computed: {
-      grandTotal() {
-        return this.results.reduce((s, r) => s + Number(r.tons), 0).toFixed(6)
-      },
-      totalWorkOrders() {
-        return this.results.reduce((s, r) => s + Number(r.work_order_count), 0)
-      },
-      uniqueProcessCount() {
-        return new Set(this.results.map(r => r.process)).size
-      },
-      groupedByProcess() {
-        return this.results.reduce((groups, row) => {
-          const key = row.process || '—'
-          if (!groups[key]) groups[key] = []
-          groups[key].push(row)
-          return groups
-        }, {})
-      },
-    },
-  }
-  </script>
+        computed: {
+            grandTotal() {
+                return this.results.reduce((s, r) => s + Number(r.tons), 0).toFixed(6)
+            },
+            totalWorkOrders() {
+                return this.results.reduce((s, r) => s + Number(r.work_order_count), 0)
+            },
+            uniqueProcessCount() {
+                return new Set(this.results.map(r => r.process)).size
+            },
+            groupedByProcess() {
+                return this.results.reduce((groups, row) => {
+                const key = row.process || '—'
+                if (!groups[key]) groups[key] = []
+                groups[key].push(row)
+                return groups
+                }, {})
+            },
+        },
+    }
+</script>
 
-  <style scoped>
+<style scoped>
   .results-summary-bar {
     display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
     background: var(--bg-secondary); border: 1px solid var(--border-accent);
@@ -156,4 +156,4 @@
   .subtotal-val {
     color: var(--text-primary); font-weight: 700;
   }
-  </style>
+</style>

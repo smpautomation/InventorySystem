@@ -1,43 +1,43 @@
 <template>
-  <div class="welcome-wrapper">
-    <div class="welcome-bg">
-      <div class="orb orb-1"></div>
-      <div class="orb orb-2"></div>
-      <div class="grid-overlay"></div>
-    </div>
-
-    <div class="welcome-content">
-      <div class="welcome-left">
-        <div class="eyebrow">
-          <!-- <span class="dot"></span> -->
-          <!-- <span>System Ready</span> -->
+    <div class="welcome-wrapper">
+        <div class="welcome-bg">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="grid-overlay"></div>
         </div>
-        <h1 class="welcome-title">
-          <span class="welcome-line">Welcome To</span>
-          <span class="system-line">Inventory System</span>
-        </h1>
-        <p class="welcome-sub">Click the navigation links to get started.</p>
-      </div>
 
-      <div class="welcome-right">
-        <div class="quick-links">
-          <Link href="/scan/single" class="chip">📱 Single Scan</Link>
-          <Link href="/scan/multiple" class="chip">📱 Multiple Scan</Link>
-          <Link href="/summary/inventory" class="chip">📊 Inventory Summary</Link>
-          <Link href="/process-time" class="chip">⏱️ Process Time</Link>
+        <div class="welcome-content">
+            <div class="welcome-left">
+                <div class="eyebrow">
+                <!-- <span class="dot"></span> -->
+                <!-- <span>System Ready</span> -->
+                </div>
+                <h1 class="welcome-title">
+                <span class="welcome-line">Welcome To</span>
+                <span class="system-line">Inventory System</span>
+                </h1>
+                <p class="welcome-sub">Click the navigation links to get started.</p>
+            </div>
+
+            <div class="welcome-right">
+                <div class="quick-links">
+                <Link href="/scan/single" class="chip">📱 Single Scan</Link>
+                <Link href="/scan/multiple" class="chip">📱 Multiple Scan</Link>
+                <Link href="/summary/inventory" class="chip">📊 Inventory Summary</Link>
+                <Link href="/process-time" class="chip">⏱️ Process Time</Link>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </template>
 
 <script>
-import { Link } from '@inertiajs/vue3'
+    import { Link } from '@inertiajs/vue3'
 
-export default {
-  components: { Link },
-  name: 'WelcomeHeader'
-}
+    export default {
+        components: { Link },
+        name: 'WelcomeHeader'
+    }
 </script>
 
 <style scoped>

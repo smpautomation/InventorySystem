@@ -1,11 +1,11 @@
 export const AREA_COLORS = [
-  '#2b82cb', '#38a169', '#d69e2e', '#e53e3e', '#9f7aea',
-  '#38b2ac', '#ed8936', '#667eea', '#fc8181', '#68d391',
+    '#2b82cb', '#38a169', '#d69e2e', '#e53e3e', '#9f7aea',
+    '#38b2ac', '#ed8936', '#667eea', '#fc8181', '#68d391',
 ]
 
 const MONTH_NAMES = [
-  'January','February','March','April','May','June',
-  'July','August','September','October','November','December'
+    'January','February','March','April','May','June',
+    'July','August','September','October','November','December'
 ]
 
 export function buildChartData(rawData, today, dayLabels, targets, currentMonthName, dateRange = {}, allMonths = {}) {
@@ -95,58 +95,58 @@ export function buildChartData(rawData, today, dayLabels, targets, currentMonthN
 }
 
 export function buildChartOptions() {
-  return {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: '#112240',
-        titleColor: '#5ba3e0',
-        bodyColor: '#c8d8e8',
-        borderColor: 'rgba(43,130,203,0.3)',
-        borderWidth: 1,
-        padding: 12,
-        callbacks: {
-          label(ctx) {
-            return ` ${ctx.dataset.label}: ${ctx.parsed.y} pcs`
-          },
-          footer(items) {
-            const total = items.reduce((sum, i) => sum + i.parsed.y, 0)
-            return `Total: ${total.toFixed(0)} pcs`
-          }
-        }
-      },
-    },
-    scales: {
-      x: {
-        stacked: true,
-        grid: { color: 'rgba(255,255,255,0.04)' },
-        ticks: { color: '#8899aa', font: { size: 11 } },
-        border: { color: 'rgba(255,255,255,0.08)' }
-      },
-      y: {
-        stacked: true,
-        grid: { color: 'rgba(255,255,255,0.06)' },
-        ticks: {
-          color: '#8899aa',
-          font: { size: 11 },
-          callback: (val) => `${val}pcs`,
+    return {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                backgroundColor: '#112240',
+                titleColor: '#5ba3e0',
+                bodyColor: '#c8d8e8',
+                borderColor: 'rgba(43,130,203,0.3)',
+                borderWidth: 1,
+                padding: 12,
+                callbacks: {
+                    label(ctx) {
+                        return ` ${ctx.dataset.label}: ${ctx.parsed.y} pcs`
+                    },
+                    footer(items) {
+                        const total = items.reduce((sum, i) => sum + i.parsed.y, 0)
+                        return `Total: ${total.toFixed(0)} pcs`
+                    }
+                }
+            },
         },
-        border: { color: 'rgba(255,255,255,0.08)' },
-        title: {
-          display: true,
-          text: 'Output (tons)',
-          color: '#8899aa',
-          font: { size: 11 },
-        }
-      }
-    },
-    animation: {
-      duration: 600,
-      easing: 'easeInOutQuart',
-    },
-  }
+        scales: {
+            x: {
+                stacked: true,
+                grid: { color: 'rgba(255,255,255,0.04)' },
+                ticks: { color: '#8899aa', font: { size: 11 } },
+                border: { color: 'rgba(255,255,255,0.08)' }
+            },
+            y: {
+                stacked: true,
+                grid: { color: 'rgba(255,255,255,0.06)' },
+                ticks: {
+                    color: '#8899aa',
+                    font: { size: 11 },
+                    callback: (val) => `${val}pcs`,
+                },
+                border: { color: 'rgba(255,255,255,0.08)' },
+                title: {
+                    display: true,
+                    text: 'Output (tons)',
+                    color: '#8899aa',
+                    font: { size: 11 },
+                }
+            }
+        },
+        animation: {
+            duration: 600,
+            easing: 'easeInOutQuart',
+        },
+    }
 }
 
 export function buildMonthlySummaries(rawData, targets = {}, allMonths = {}) {

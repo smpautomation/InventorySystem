@@ -1,453 +1,453 @@
 <template>
     <div class="chart-header">
-      <div class="header-left">
-        <div class="header-eyebrow">{{ eyebrow }}</div>
-        <h2 class="header-title">
-          {{ title }} <span class="header-unit">(tons)</span>
-        </h2>
-      </div>
-      <div class="header-right">
-        <div class="header-top-row">
-          <button v-if="canEditTargets" class="edit-target-btn" @click="openModal">
-            <span class="btn-icon">✏️</span>
-            <span class="btn-text">Edit Targets</span>
-          </button>
-          <button class="print-btn" @click="$emit('open-print')">
-            <span class="btn-icon">🖨️</span>
-            <span class="btn-text">Print</span>
-          </button>
-          <label class="toggle-label">
-            <input
-                type="checkbox"
-                class="toggle-checkbox"
-                :checked="showAreaBreakdown"
-                @change="$emit('update:showAreaBreakdown', $event.target.checked)"
-            />
-            <span class="toggle-track">
-                <span class="toggle-thumb"></span>
-            </span>
-            <span class="toggle-text">
-                <span class="toggle-icon">⬡</span>
-                Per Area
-            </span>
-          </label>
-          <label class="toggle-label">
-            <input
-                type="checkbox"
-                class="toggle-checkbox"
-                :checked="showByType"
-                @change="$emit('update:showByType', $event.target.checked)"
-            />
-            <span class="toggle-track">
-                <span class="toggle-thumb"></span>
-            </span>
-            <span class="toggle-text">
-                <span class="toggle-icon">◈</span>
-                By Type
-            </span>
-          </label>
-          <div class="date-range-wrap">
-            <input
-              type="date"
-              v-model="dateFrom"
-              class="date-input"
-              :max="dateTo || todayStr"
-              @change="emitDateRange"
-            />
-            <span class="date-sep">→</span>
-            <input
-              type="date"
-              v-model="dateTo"
-              class="date-input"
-              :min="dateFrom"
-              :max="todayStr"
-              @change="emitDateRange"
-            />
-            <button
-              v-if="dateFrom || dateTo"
-              class="date-clear-btn"
-              @click="clearDateRange"
-              title="Reset to default"
-            >✕</button>
-          </div>
-          <div class="month-badge">
-            <span class="month-label">{{ currentMonthLabel }}</span>
-            <span class="day-indicator">Day {{ today }} of {{ daysInMonth }}</span>
-          </div>
+        <div class="header-left">
+            <div class="header-eyebrow">{{ eyebrow }}</div>
+            <h2 class="header-title">
+                {{ title }} <span class="header-unit">(tons)</span>
+            </h2>
         </div>
-        <div class="legend-row">
-          <div v-for="ds in datasets" :key="ds.label" class="legend-item">
-            <span
-              class="legend-dot"
-              :style="ds.type === 'line'
-                ? { background: 'none', borderBottom: `2px dashed ${ds.borderColor}`, width: '16px', height: '0', borderRadius: '0' }
-                : { background: ds.backgroundColor }"
-            ></span>
-            <span class="legend-text">{{ ds.label }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── Modal ── -->
-      <Teleport to="body">
-        <div v-if="showModal" class="modal-backdrop" @click.self="closeModal">
-          <div class="modal">
-
-            <div class="modal-header">
-              <h3 class="modal-title">Edit Targets</h3>
-              <button class="modal-close" @click="closeModal">✕</button>
-            </div>
-
-            <!-- Tabs -->
-            <div class="modal-tabs">
-              <button
-                class="modal-tab"
-                :class="{ 'modal-tab-active': activeTab === 'monthly' }"
-                @click="activeTab = 'monthly'"
-              >Monthly</button>
-              <button
-                class="modal-tab"
-                :class="{ 'modal-tab-active': activeTab === 'daily' }"
-                @click="activeTab = 'daily'"
-              >Daily</button>
-            </div>
-
-            <!-- ── Monthly Tab ── -->
-            <template v-if="activeTab === 'monthly'">
-              <div class="modal-controls">
-                <div class="control-group">
-                  <label class="control-label">Year</label>
-                  <select v-model="selectedYear" class="control-select">
-                    <option v-for="y in yearOptions" :key="y" :value="y">{{ y }}</option>
-                  </select>
-                </div>
-              </div>
-              <div class="modal-body">
-                <div v-for="(row, index) in monthlyForm" :key="row.month" class="target-row">
-                  <span class="target-month">{{ row.month }}</span>
-                  <div class="target-input-wrap">
-                    <input
-                      v-model.number="monthlyForm[index].target"
-                      type="number" min="0" step="0.01"
-                      class="target-input" placeholder="Target"
-                    />
-                    <span class="target-unit">t</span>
-                  </div>
-                  <div class="target-input-wrap">
-                    <input
-                      v-model.number="monthlyForm[index].working_days"
-                      type="number" min="0" step="0.01"
-                      class="target-input" style="width:70px" placeholder="Days"
-                    />
-                    <span class="target-unit">days</span>
-                  </div>
-                </div>
-              </div>
-              <div class="modal-footer">
-                <span v-if="saveSuccess" class="save-success">✓ Saved successfully</span>
-                <span v-if="saveError"   class="save-error">✕ {{ saveError }}</span>
-                <button class="btn-cancel" @click="closeModal">Cancel</button>
-                <button class="btn-save" :disabled="saving" @click="saveMonthlyTargets">
-                  {{ saving ? 'Saving…' : 'Save Targets' }}
+        <div class="header-right">
+            <div class="header-top-row">
+                <button v-if="canEditTargets" class="edit-target-btn" @click="openModal">
+                    <span class="btn-icon">✏️</span>
+                    <span class="btn-text">Edit Targets</span>
                 </button>
-              </div>
-            </template>
-
-            <!-- ── Daily Tab ── -->
-            <template v-if="activeTab === 'daily'">
-              <div class="modal-controls">
-                <div class="control-group">
-                  <label class="control-label">Year</label>
-                  <select v-model="dailySelectedYear" class="control-select">
-                    <option v-for="y in yearOptions" :key="y" :value="y">{{ y }}</option>
-                  </select>
-                </div>
-                <div class="control-group">
-                  <label class="control-label">Month</label>
-                  <select v-model="dailySelectedMonth" class="control-select">
-                    <option v-for="(name, idx) in MONTH_NAMES" :key="idx" :value="idx + 1">{{ name }}</option>
-                  </select>
-                </div>
-                <div class="control-group">
-                    <label class="control-label">Area</label>
-                    <select v-model="dailySelectedArea" class="control-select">
-                        <option v-for="a in areas" :key="a" :value="a">{{ a }}</option>
-                    </select>
-                </div>
-              </div>
-              <div class="modal-body">
-                <div class="daily-grid-header">
-                  <span class="daily-col-day">Day</span>
-                  <span class="daily-col-target">Target (t)</span>
-                </div>
-                <div
-                  v-for="(row, index) in dailyForm"
-                  :key="row.day"
-                  class="target-row daily-target-row"
-                >
-                  <span class="target-month daily-day-label">{{ row.day }}</span>
-                  <div class="target-input-wrap">
-                    <input
-                      v-model.number="dailyForm[index].target"
-                      type="number" min="0" step="0.01"
-                      class="target-input" placeholder="0.00"
-                    />
-                    <span class="target-unit">t</span>
-                  </div>
-                </div>
-              </div>
-              <div class="modal-footer">
-                <span v-if="dailySaveSuccess" class="save-success">✓ Saved successfully</span>
-                <span v-if="dailySaveError"   class="save-error">✕ {{ dailySaveError }}</span>
-                <button class="btn-cancel" @click="closeModal">Cancel</button>
-                <button class="btn-save" :disabled="dailySaving" @click="saveDailyTargets">
-                  {{ dailySaving ? 'Saving…' : 'Save Targets' }}
+                <button class="print-btn" @click="$emit('open-print')">
+                    <span class="btn-icon">🖨️</span>
+                    <span class="btn-text">Print</span>
                 </button>
-              </div>
-            </template>
-
-          </div>
+                <label class="toggle-label">
+                    <input
+                        type="checkbox"
+                        class="toggle-checkbox"
+                        :checked="showAreaBreakdown"
+                        @change="$emit('update:showAreaBreakdown', $event.target.checked)"
+                    />
+                    <span class="toggle-track">
+                        <span class="toggle-thumb"></span>
+                    </span>
+                    <span class="toggle-text">
+                        <span class="toggle-icon">⬡</span>
+                        Per Area
+                    </span>
+                </label>
+                <label class="toggle-label">
+                    <input
+                        type="checkbox"
+                        class="toggle-checkbox"
+                        :checked="showByType"
+                        @change="$emit('update:showByType', $event.target.checked)"
+                    />
+                    <span class="toggle-track">
+                        <span class="toggle-thumb"></span>
+                    </span>
+                    <span class="toggle-text">
+                        <span class="toggle-icon">◈</span>
+                        By Type
+                    </span>
+                </label>
+                <div class="date-range-wrap">
+                    <input
+                    type="date"
+                    v-model="dateFrom"
+                    class="date-input"
+                    :max="dateTo || todayStr"
+                    @change="emitDateRange"
+                    />
+                    <span class="date-sep">→</span>
+                    <input
+                    type="date"
+                    v-model="dateTo"
+                    class="date-input"
+                    :min="dateFrom"
+                    :max="todayStr"
+                    @change="emitDateRange"
+                    />
+                    <button
+                    v-if="dateFrom || dateTo"
+                    class="date-clear-btn"
+                    @click="clearDateRange"
+                    title="Reset to default"
+                    >✕</button>
+                </div>
+                <div class="month-badge">
+                    <span class="month-label">{{ currentMonthLabel }}</span>
+                    <span class="day-indicator">Day {{ today }} of {{ daysInMonth }}</span>
+                </div>
+            </div>
+            <div class="legend-row">
+                <div v-for="ds in datasets" :key="ds.label" class="legend-item">
+                    <span
+                    class="legend-dot"
+                    :style="ds.type === 'line'
+                        ? { background: 'none', borderBottom: `2px dashed ${ds.borderColor}`, width: '16px', height: '0', borderRadius: '0' }
+                        : { background: ds.backgroundColor }"
+                    ></span>
+                    <span class="legend-text">{{ ds.label }}</span>
+                </div>
+            </div>
         </div>
-      </Teleport>
+
+        <!-- ── Modal ── -->
+        <Teleport to="body">
+            <div v-if="showModal" class="modal-backdrop" @click.self="closeModal">
+                <div class="modal">
+
+                    <div class="modal-header">
+                        <h3 class="modal-title">Edit Targets</h3>
+                        <button class="modal-close" @click="closeModal">✕</button>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="modal-tabs">
+                        <button
+                            class="modal-tab"
+                            :class="{ 'modal-tab-active': activeTab === 'monthly' }"
+                            @click="activeTab = 'monthly'"
+                        >Monthly</button>
+                        <button
+                            class="modal-tab"
+                            :class="{ 'modal-tab-active': activeTab === 'daily' }"
+                            @click="activeTab = 'daily'"
+                        >Daily</button>
+                    </div>
+
+                    <!-- ── Monthly Tab ── -->
+                    <template v-if="activeTab === 'monthly'">
+                        <div class="modal-controls">
+                            <div class="control-group">
+                            <label class="control-label">Year</label>
+                            <select v-model="selectedYear" class="control-select">
+                                <option v-for="y in yearOptions" :key="y" :value="y">{{ y }}</option>
+                            </select>
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            <div v-for="(row, index) in monthlyForm" :key="row.month" class="target-row">
+                            <span class="target-month">{{ row.month }}</span>
+                            <div class="target-input-wrap">
+                                <input
+                                v-model.number="monthlyForm[index].target"
+                                type="number" min="0" step="0.01"
+                                class="target-input" placeholder="Target"
+                                />
+                                <span class="target-unit">t</span>
+                            </div>
+                            <div class="target-input-wrap">
+                                <input
+                                v-model.number="monthlyForm[index].working_days"
+                                type="number" min="0" step="0.01"
+                                class="target-input" style="width:70px" placeholder="Days"
+                                />
+                                <span class="target-unit">days</span>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <span v-if="saveSuccess" class="save-success">✓ Saved successfully</span>
+                            <span v-if="saveError"   class="save-error">✕ {{ saveError }}</span>
+                            <button class="btn-cancel" @click="closeModal">Cancel</button>
+                            <button class="btn-save" :disabled="saving" @click="saveMonthlyTargets">
+                            {{ saving ? 'Saving…' : 'Save Targets' }}
+                            </button>
+                        </div>
+                    </template>
+
+                    <!-- ── Daily Tab ── -->
+                    <template v-if="activeTab === 'daily'">
+                        <div class="modal-controls">
+                            <div class="control-group">
+                                <label class="control-label">Year</label>
+                                <select v-model="dailySelectedYear" class="control-select">
+                                    <option v-for="y in yearOptions" :key="y" :value="y">{{ y }}</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Month</label>
+                                <select v-model="dailySelectedMonth" class="control-select">
+                                    <option v-for="(name, idx) in MONTH_NAMES" :key="idx" :value="idx + 1">{{ name }}</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Area</label>
+                                <select v-model="dailySelectedArea" class="control-select">
+                                    <option v-for="a in areas" :key="a" :value="a">{{ a }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            <div class="daily-grid-header">
+                            <span class="daily-col-day">Day</span>
+                            <span class="daily-col-target">Target (t)</span>
+                            </div>
+                            <div
+                                v-for="(row, index) in dailyForm"
+                                :key="row.day"
+                                class="target-row daily-target-row"
+                                >
+                                <span class="target-month daily-day-label">{{ row.day }}</span>
+                                <div class="target-input-wrap">
+                                    <input
+                                    v-model.number="dailyForm[index].target"
+                                    type="number" min="0" step="0.01"
+                                    class="target-input" placeholder="0.00"
+                                    />
+                                    <span class="target-unit">t</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <span v-if="dailySaveSuccess" class="save-success">✓ Saved successfully</span>
+                            <span v-if="dailySaveError"   class="save-error">✕ {{ dailySaveError }}</span>
+                            <button class="btn-cancel" @click="closeModal">Cancel</button>
+                            <button class="btn-save" :disabled="dailySaving" @click="saveDailyTargets">
+                            {{ dailySaving ? 'Saving…' : 'Save Targets' }}
+                            </button>
+                        </div>
+                    </template>
+
+                </div>
+            </div>
+        </Teleport>
     </div>
-  </template>
+</template>
 
-  <script>
-  const MONTH_NAMES = [
-    'January','February','March','April','May','June',
-    'July','August','September','October','November','December'
-  ]
+<script>
+    const MONTH_NAMES = [
+        'January','February','March','April','May','June',
+        'July','August','September','October','November','December'
+    ]
 
-  export default {
-    name: 'ChartHeader',
+    export default {
+        name: 'ChartHeader',
 
-    props: {
-      title:             { type: String,  required: true },
-      eyebrow:           { type: String,  default: 'Monthly Output' },
-      datasets:          { type: Array,   default: () => [] },
-      currentMonthLabel: { type: String,  required: true },
-      today:             { type: Number,  required: true },
-      daysInMonth:       { type: Number,  required: true },
-      plant:             { type: String,  required: true },
-      targets:           { type: Object,  default: () => ({}) },
-      dailyTargets:      { type: Object,  default: () => ({}) },
-      areas:             { type: Array, default: () => [] },
-      showAreaBreakdown: { type: Boolean, default: false },
-      showByType: { type: Boolean, default: false },
-    },
+        props: {
+        title:             { type: String,  required: true },
+        eyebrow:           { type: String,  default: 'Monthly Output' },
+        datasets:          { type: Array,   default: () => [] },
+        currentMonthLabel: { type: String,  required: true },
+        today:             { type: Number,  required: true },
+        daysInMonth:       { type: Number,  required: true },
+        plant:             { type: String,  required: true },
+        targets:           { type: Object,  default: () => ({}) },
+        dailyTargets:      { type: Object,  default: () => ({}) },
+        areas:             { type: Array, default: () => [] },
+        showAreaBreakdown: { type: Boolean, default: false },
+        showByType: { type: Boolean, default: false },
+        },
 
-    emits: ['targets-updated', 'daily-targets-updated', 'date-range-changed', 'open-print', 'update:showAreaBreakdown', 'update:showByType'],
+        emits: ['targets-updated', 'daily-targets-updated', 'date-range-changed', 'open-print', 'update:showAreaBreakdown', 'update:showByType'],
 
-    data() {
-      const now = new Date()
-      return {
-        MONTH_NAMES,
-        showModal:   false,
-        activeTab:   'monthly',
+        data() {
+        const now = new Date()
+        return {
+            MONTH_NAMES,
+            showModal:   false,
+            activeTab:   'monthly',
 
-        saving:       false,
-        saveSuccess:  false,
-        saveError:    null,
-        selectedYear: now.getFullYear(),
-        monthlyForm:  [],
+            saving:       false,
+            saveSuccess:  false,
+            saveError:    null,
+            selectedYear: now.getFullYear(),
+            monthlyForm:  [],
 
-        dailySaving:       false,
-        dailySaveSuccess:  false,
-        dailySaveError:    null,
-        dailySelectedYear:  now.getFullYear(),
-        dailySelectedMonth: now.getMonth() + 1,
-        dailyForm:          [],
-        dailySelectedArea: '',
+            dailySaving:       false,
+            dailySaveSuccess:  false,
+            dailySaveError:    null,
+            dailySelectedYear:  now.getFullYear(),
+            dailySelectedMonth: now.getMonth() + 1,
+            dailyForm:          [],
+            dailySelectedArea: '',
 
-        ipData: null,
+            ipData: null,
 
-        dateFrom: '',
-        dateTo:   '',
-      }
-    },
-
-    async mounted() {
-      try {
-        const res  = await fetch('/api/ip-details')
-        const data = await res.json()
-        this.ipData = data
-      } catch {
-        this.ipData = null
-      }
-    },
-
-    computed: {
-      yearOptions() {
-        const y = new Date().getFullYear()
-        return [y - 1, y, y + 1]
-      },
-      canEditTargets() {
-        return this.ipData?.location === 'AUTOMATION'
-      },
-      todayStr() {
-        return new Date().toISOString().split('T')[0]
-      },
-    },
-
-    watch: {
-      selectedYear() {
-        this.monthlyForm = this.buildMonthlyForm(this.selectedYear)
-      },
-      targets: {
-        immediate: true,
-        deep: true,
-        handler() {
-          this.monthlyForm = this.buildMonthlyForm(this.selectedYear)
+            dateFrom: '',
+            dateTo:   '',
         }
-      },
+        },
 
-      dailySelectedArea() {
-        this.dailyForm = this.buildDailyForm(this.dailySelectedYear, this.dailySelectedMonth, this.dailySelectedArea)
-      },
-      dailySelectedMonth() {
-        this.dailyForm = this.buildDailyForm(this.dailySelectedYear, this.dailySelectedMonth)
-      },
-      dailySelectedYear() {
-        this.dailyForm = this.buildDailyForm(this.dailySelectedYear, this.dailySelectedMonth)
-      },
-      dailyTargets: {
-        immediate: true,
-        deep: true,
-        handler() {
-          this.dailyForm = this.buildDailyForm(this.dailySelectedYear, this.dailySelectedMonth)
-        }
-      },
-      areas: {
-        immediate: true,
-        handler(val) {
-            if (val.length && !this.dailySelectedArea) {
-                this.dailySelectedArea = ''
-                this.dailyForm = []
-            }
-        }
-      },
-    },
-
-    methods: {
-      buildMonthlyForm(year) {
-        return MONTH_NAMES.map(month => {
-          const entry        = this.targets?.[month]
-          const target       = typeof entry === 'object' ? Number(entry?.target       ?? 0) : Number(entry ?? 0)
-          const working_days = typeof entry === 'object' ? Number(entry?.working_days ?? 0) : 0
-          return { month, year, target, working_days }
-        })
-      },
-
-      buildDailyForm(year, monthNumber, area) {
-        if (!area) return []
-        const daysInMonth = new Date(year, monthNumber, 0).getDate()
-        return Array.from({ length: daysInMonth }, (_, i) => {
-            const day    = i + 1
-            const stored = this.dailyTargets?.[area]?.[String(day)]
-                        ?? this.dailyTargets?.[area]?.[day]
-            return {
-                day,
-                month:        MONTH_NAMES[monthNumber - 1],
-                month_number: monthNumber,
-                year,
-                area,
-                target: stored !== undefined ? Number(stored) : 0,
-            }
-        })
-      },
-
-      // ── Modal ────────────────────────────────────────────────
-      openModal() {
-        this.monthlyForm      = this.buildMonthlyForm(this.selectedYear)
-        this.dailySelectedArea = ''
-        this.dailyForm        = []
-        this.showModal        = true
-        this.saveSuccess      = false
-        this.saveError        = null
-        this.dailySaveSuccess = false
-        this.dailySaveError   = null
-      },
-      closeModal() {
-        this.showModal = false
-      },
-
-      // ── Save monthly targets ─────────────────────────────────
-      async saveMonthlyTargets() {
-        this.saving      = true
-        this.saveSuccess = false
-        this.saveError   = null
+        async mounted() {
         try {
-          const payload = this.monthlyForm.filter(row => row.target > 0)
-          if (!payload.length) { this.saveError = 'No targets to save'; return }
-
-          const res = await fetch(`/api/plant-target/${this.plant}`, {
-            method:  'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': this.csrfToken() },
-            body:    JSON.stringify({ targets: payload }),
-          })
-          if (!res.ok) throw new Error(`HTTP ${res.status}`)
-
-          this.saveSuccess = true
-          this.$emit('targets-updated')
-          setTimeout(() => { this.saveSuccess = false }, 3000)
-        } catch (e) {
-          this.saveError = e.message
-        } finally {
-          this.saving = false
+            const res  = await fetch('/api/ip-details')
+            const data = await res.json()
+            this.ipData = data
+        } catch {
+            this.ipData = null
         }
-      },
+        },
 
-      // ── Save daily targets ───────────────────────────────────
-      async saveDailyTargets() {
-        this.dailySaving      = true
-        this.dailySaveSuccess = false
-        this.dailySaveError   = null
-        try {
-          const payload = this.dailyForm
-            .filter(row => row.target > 0)
-            .map(row => ({
-              day:          row.day,
-              month:        row.month,
-              month_number: row.month_number,
-              year:         row.year,
-              area:         row.area,
-              target:       row.target,
-            }))
+        computed: {
+        yearOptions() {
+            const y = new Date().getFullYear()
+            return [y - 1, y, y + 1]
+        },
+        canEditTargets() {
+            return this.ipData?.location === 'AUTOMATION'
+        },
+        todayStr() {
+            return new Date().toISOString().split('T')[0]
+        },
+        },
 
-          if (!payload.length) { this.dailySaveError = 'No targets to save'; return }
+        watch: {
+        selectedYear() {
+            this.monthlyForm = this.buildMonthlyForm(this.selectedYear)
+        },
+        targets: {
+            immediate: true,
+            deep: true,
+            handler() {
+            this.monthlyForm = this.buildMonthlyForm(this.selectedYear)
+            }
+        },
 
-          const res = await fetch(`/api/plant-daily-target/${this.plant}`, {
-            method:  'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': this.csrfToken() },
-            body:    JSON.stringify({ targets: payload }),
-          })
-          if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        dailySelectedArea() {
+            this.dailyForm = this.buildDailyForm(this.dailySelectedYear, this.dailySelectedMonth, this.dailySelectedArea)
+        },
+        dailySelectedMonth() {
+            this.dailyForm = this.buildDailyForm(this.dailySelectedYear, this.dailySelectedMonth)
+        },
+        dailySelectedYear() {
+            this.dailyForm = this.buildDailyForm(this.dailySelectedYear, this.dailySelectedMonth)
+        },
+        dailyTargets: {
+            immediate: true,
+            deep: true,
+            handler() {
+            this.dailyForm = this.buildDailyForm(this.dailySelectedYear, this.dailySelectedMonth)
+            }
+        },
+        areas: {
+            immediate: true,
+            handler(val) {
+                if (val.length && !this.dailySelectedArea) {
+                    this.dailySelectedArea = ''
+                    this.dailyForm = []
+                }
+            }
+        },
+        },
 
-          this.dailySaveSuccess = true
-          this.$emit('daily-targets-updated')
-          setTimeout(() => { this.dailySaveSuccess = false }, 3000)
-        } catch (e) {
-          this.dailySaveError = e.message
-        } finally {
-          this.dailySaving = false
+        methods: {
+        buildMonthlyForm(year) {
+            return MONTH_NAMES.map(month => {
+            const entry        = this.targets?.[month]
+            const target       = typeof entry === 'object' ? Number(entry?.target       ?? 0) : Number(entry ?? 0)
+            const working_days = typeof entry === 'object' ? Number(entry?.working_days ?? 0) : 0
+            return { month, year, target, working_days }
+            })
+        },
+
+        buildDailyForm(year, monthNumber, area) {
+            if (!area) return []
+            const daysInMonth = new Date(year, monthNumber, 0).getDate()
+            return Array.from({ length: daysInMonth }, (_, i) => {
+                const day    = i + 1
+                const stored = this.dailyTargets?.[area]?.[String(day)]
+                            ?? this.dailyTargets?.[area]?.[day]
+                return {
+                    day,
+                    month:        MONTH_NAMES[monthNumber - 1],
+                    month_number: monthNumber,
+                    year,
+                    area,
+                    target: stored !== undefined ? Number(stored) : 0,
+                }
+            })
+        },
+
+        // ── Modal ────────────────────────────────────────────────
+        openModal() {
+            this.monthlyForm      = this.buildMonthlyForm(this.selectedYear)
+            this.dailySelectedArea = ''
+            this.dailyForm        = []
+            this.showModal        = true
+            this.saveSuccess      = false
+            this.saveError        = null
+            this.dailySaveSuccess = false
+            this.dailySaveError   = null
+        },
+        closeModal() {
+            this.showModal = false
+        },
+
+        // ── Save monthly targets ─────────────────────────────────
+        async saveMonthlyTargets() {
+            this.saving      = true
+            this.saveSuccess = false
+            this.saveError   = null
+            try {
+            const payload = this.monthlyForm.filter(row => row.target > 0)
+            if (!payload.length) { this.saveError = 'No targets to save'; return }
+
+            const res = await fetch(`/api/plant-target/${this.plant}`, {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': this.csrfToken() },
+                body:    JSON.stringify({ targets: payload }),
+            })
+            if (!res.ok) throw new Error(`HTTP ${res.status}`)
+
+            this.saveSuccess = true
+            this.$emit('targets-updated')
+            setTimeout(() => { this.saveSuccess = false }, 3000)
+            } catch (e) {
+            this.saveError = e.message
+            } finally {
+            this.saving = false
+            }
+        },
+
+        // ── Save daily targets ───────────────────────────────────
+        async saveDailyTargets() {
+            this.dailySaving      = true
+            this.dailySaveSuccess = false
+            this.dailySaveError   = null
+            try {
+            const payload = this.dailyForm
+                .filter(row => row.target > 0)
+                .map(row => ({
+                day:          row.day,
+                month:        row.month,
+                month_number: row.month_number,
+                year:         row.year,
+                area:         row.area,
+                target:       row.target,
+                }))
+
+            if (!payload.length) { this.dailySaveError = 'No targets to save'; return }
+
+            const res = await fetch(`/api/plant-daily-target/${this.plant}`, {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': this.csrfToken() },
+                body:    JSON.stringify({ targets: payload }),
+            })
+            if (!res.ok) throw new Error(`HTTP ${res.status}`)
+
+            this.dailySaveSuccess = true
+            this.$emit('daily-targets-updated')
+            setTimeout(() => { this.dailySaveSuccess = false }, 3000)
+            } catch (e) {
+            this.dailySaveError = e.message
+            } finally {
+            this.dailySaving = false
+            }
+        },
+
+        csrfToken() {
+            return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? ''
+        },
+
+        emitDateRange() {
+            this.$emit('date-range-changed', { from: this.dateFrom || null, to: this.dateTo || null })
+        },
+        clearDateRange() {
+            this.dateFrom = ''
+            this.dateTo   = ''
+            this.$emit('date-range-changed', { from: null, to: null })
+        },
         }
-      },
-
-      csrfToken() {
-        return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? ''
-      },
-
-      emitDateRange() {
-        this.$emit('date-range-changed', { from: this.dateFrom || null, to: this.dateTo || null })
-      },
-      clearDateRange() {
-        this.dateFrom = ''
-        this.dateTo   = ''
-        this.$emit('date-range-changed', { from: null, to: null })
-      },
     }
-  }
-  </script>
+</script>
 
 <style scoped>
 .chart-header {

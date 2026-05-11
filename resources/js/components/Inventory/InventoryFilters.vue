@@ -1,95 +1,95 @@
 <template>
     <div class="filter-card">
-      <div class="filter-row">
+        <div class="filter-row">
 
-        <div class="filter-group">
-          <label class="filter-label">Daily Check File</label>
-          <div class="select-wrap">
-            <select
-              :value="selectedDailyCheck"
-              class="filter-select"
-              :disabled="loading"
-              @change="$emit('update:selectedDailyCheck', $event.target.value)"
-            >
-              <option value="" disabled>{{ loading ? 'Loading…' : 'Select a file' }}</option>
-              <option v-for="f in dailyCheckFiles" :key="f" :value="f">{{ f }}</option>
-            </select>
-            <span class="select-arrow">▾</span>
-          </div>
-        </div>
-
-        <div class="filter-group">
-          <label class="filter-label">
-            Areas
-            <span v-if="selectedAreas.length" class="filter-count">{{ selectedAreas.length }} selected</span>
-          </label>
-          <div class="area-dropdown" :class="{ disabled: loading }">
-            <div
-              v-for="area in availableAreas"
-              :key="area"
-              class="area-option"
-              :class="{ selected: selectedAreas.includes(area) }"
-              @click="toggleArea(area)"
-            >
-              <span class="area-option-tick">✓</span>
-              {{ area }}
+            <div class="filter-group">
+                <label class="filter-label">Daily Check File</label>
+                <div class="select-wrap">
+                    <select
+                    :value="selectedDailyCheck"
+                    class="filter-select"
+                    :disabled="loading"
+                    @change="$emit('update:selectedDailyCheck', $event.target.value)"
+                    >
+                    <option value="" disabled>{{ loading ? 'Loading…' : 'Select a file' }}</option>
+                    <option v-for="f in dailyCheckFiles" :key="f" :value="f">{{ f }}</option>
+                    </select>
+                    <span class="select-arrow">▾</span>
+                </div>
             </div>
-          </div>
+
+            <div class="filter-group">
+                <label class="filter-label">
+                    Areas
+                    <span v-if="selectedAreas.length" class="filter-count">{{ selectedAreas.length }} selected</span>
+                </label>
+                <div class="area-dropdown" :class="{ disabled: loading }">
+                    <div
+                    v-for="area in availableAreas"
+                    :key="area"
+                    class="area-option"
+                    :class="{ selected: selectedAreas.includes(area) }"
+                    @click="toggleArea(area)"
+                    >
+                    <span class="area-option-tick">✓</span>
+                    {{ area }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-actions">
+                <button class="btn-query" :disabled="!canQuery || queryLoading" @click="$emit('query')">
+                    <span v-if="queryLoading" class="btn-spinner">⟳</span>
+                    <span v-else>⬡</span>
+                    {{ queryLoading ? 'Querying…' : 'Run Query' }}
+                </button>
+                <button v-if="hasResults" class="btn-clear" @click="$emit('clear')">
+                    ✕ Clear
+                </button>
+            </div>
+
         </div>
 
-        <div class="filter-actions">
-          <button class="btn-query" :disabled="!canQuery || queryLoading" @click="$emit('query')">
-            <span v-if="queryLoading" class="btn-spinner">⟳</span>
-            <span v-else>⬡</span>
-            {{ queryLoading ? 'Querying…' : 'Run Query' }}
-          </button>
-          <button v-if="hasResults" class="btn-clear" @click="$emit('clear')">
-            ✕ Clear
-          </button>
-        </div>
-
-      </div>
-
-      <div v-if="initError"  class="error-banner">⚠ {{ initError }}</div>
-      <div v-if="queryError" class="error-banner">⚠ {{ queryError }}</div>
+        <div v-if="initError"  class="error-banner">⚠ {{ initError }}</div>
+        <div v-if="queryError" class="error-banner">⚠ {{ queryError }}</div>
     </div>
-  </template>
+</template>
 
-  <script>
-  export default {
-    name: 'InventoryFilters',
+<script>
+    export default {
+        name: 'InventoryFilters',
 
-    props: {
-      dailyCheckFiles:    { type: Array,   default: () => [] },
-      availableAreas:     { type: Array,   default: () => [] },
-      selectedDailyCheck: { type: String,  default: '' },
-      selectedAreas:      { type: Array,   default: () => [] },
-      loading:            { type: Boolean, default: false },
-      queryLoading:       { type: Boolean, default: false },
-      hasResults:         { type: Boolean, default: false },
-      initError:          { type: String,  default: null },
-      queryError:         { type: String,  default: null },
-    },
+        props: {
+            dailyCheckFiles:    { type: Array,   default: () => [] },
+            availableAreas:     { type: Array,   default: () => [] },
+            selectedDailyCheck: { type: String,  default: '' },
+            selectedAreas:      { type: Array,   default: () => [] },
+            loading:            { type: Boolean, default: false },
+            queryLoading:       { type: Boolean, default: false },
+            hasResults:         { type: Boolean, default: false },
+            initError:          { type: String,  default: null },
+            queryError:         { type: String,  default: null },
+        },
 
-    emits: ['update:selectedDailyCheck', 'update:selectedAreas', 'query', 'clear'],
+        emits: ['update:selectedDailyCheck', 'update:selectedAreas', 'query', 'clear'],
 
-    computed: {
-      canQuery() {
-        return this.selectedDailyCheck && this.selectedAreas.length > 0
-      },
-    },
+        computed: {
+            canQuery() {
+                return this.selectedDailyCheck && this.selectedAreas.length > 0
+            },
+        },
 
-    methods: {
-      toggleArea(area) {
-        const updated = [...this.selectedAreas]
-        const idx     = updated.indexOf(area)
-        if (idx === -1) updated.push(area)
-        else            updated.splice(idx, 1)
-        this.$emit('update:selectedAreas', updated)
-      },
-    },
-  }
-  </script>
+        methods: {
+            toggleArea(area) {
+                const updated = [...this.selectedAreas]
+                const idx     = updated.indexOf(area)
+                if (idx === -1) updated.push(area)
+                else            updated.splice(idx, 1)
+                this.$emit('update:selectedAreas', updated)
+            },
+        },
+    }
+</script>
 
   <style scoped>
   .filter-card {

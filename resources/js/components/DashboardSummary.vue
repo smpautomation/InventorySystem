@@ -1,225 +1,225 @@
 <template>
-  <div class="dashboard-wrapper">
+    <div class="dashboard-wrapper">
 
-    <!-- Stat Cards Row -->
-    <div class="stats-grid">
-      <div class="stat-card" v-for="stat in stats" :key="stat.label">
-        <div class="stat-icon">{{ stat.icon }}</div>
-        <div class="stat-body">
-          <div class="stat-value">{{ stat.value }}</div>
-          <div class="stat-label">{{ stat.label }}</div>
-        </div>
-        <div class="stat-badge" :class="stat.trend > 0 ? 'up' : 'down'">
-          {{ stat.trend > 0 ? '▲' : '▼' }} {{ Math.abs(stat.trend) }}%
-        </div>
-      </div>
-    </div>
-
-    <div class="dash-card full-width-card mb">
-      <div class="card-header">
-        <h3 class="card-title">Inventory System Quick Info</h3>
-      </div>
-      <div class="footer-info">
-        <span class="footer-item">Latest Daily Check File: <strong>—</strong></span>
-        <span class="footer-item">Total Work Order Count: <strong>—</strong>
-            <span class="info-icon">ℹ️<span class="tooltip">Re-upload latest daily check file if total work order falls below 5,000.</span></span>
-        </span>
-      </div>
-    </div>
-
-    <div class="dash-card full-width-card mb">
-      <div class="card-header">
-        <h3 class="card-title">🔍 Mixing Prevention Model Scan History</h3>
-        <!-- <router-link to="/summary/scanning" class="card-link">View All →</router-link> -->
-      </div>
-      <div class="table-placeholder">
-        <table class="preview-table">
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Date/Time</th>
-              <th>Area</th>
-              <th>Work Order</th>
-              <th>Model Name</th>
-              <th>Lot No.</th>
-              <th>Quantity</th>
-              <th>IP Address</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="n in 5" :key="n">
-              <td><div class="skel short"></div></td>
-              <td><div class="skel"></div></td>
-              <td><div class="skel short"></div></td>
-              <td><div class="skel short"></div></td>
-              <td><div class="skel"></div></td>
-              <td><div class="skel"></div></td>
-              <td><div class="skel short"></div></td>
-              <td><div class="skel"></div></td>
-            </tr>
-          </tbody>
-        </table>
-
-      </div>
-    </div>
-
-    <!-- Row 2: Reject Charts side by side -->
-    <div class="charts-row mb">
-
-      <!-- Reject Per Description (pcs) -->
-      <div class="dash-card">
-        <div class="card-header">
-          <h3 class="card-title">📊 Reject Description (pcs)</h3>
-          <span class="card-date">—</span>
-        </div>
-        <div class="chart-area">
-          <div class="chart-label-y">Reject (pcs)</div>
-          <div class="chart-mock-bars">
-            <div v-for="n in 10" :key="n" class="mock-bar pcs" :style="{ height: (15 + (n * 7) % 70) + '%' }"></div>
-          </div>
-        </div>
-        <div class="reject-list">
-          <div class="reject-item" v-for="item in rejectItemsPcs" :key="item.label">
-            <span class="reject-dot" :style="{ background: item.color }"></span>
-            <span class="reject-label">{{ item.label }}</span>
-            <span class="reject-val">{{ item.value }} pcs</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Reject Per Description (kg) -->
-      <div class="dash-card">
-        <div class="card-header">
-          <h3 class="card-title">⚖️ Reject Description (kg)</h3>
-          <span class="card-date">—</span>
-        </div>
-        <div class="chart-area">
-          <div class="chart-label-y">Reject (kg)</div>
-          <div class="chart-mock-bars">
-            <div v-for="n in 10" :key="n" class="mock-bar kg" :style="{ height: (10 + (n * 11) % 75) + '%' }"></div>
-          </div>
-        </div>
-        <div class="reject-list">
-          <div class="reject-item" v-for="item in rejectItemsKg" :key="item.label">
-            <span class="reject-dot" :style="{ background: item.color }"></span>
-            <span class="reject-label">{{ item.label }}</span>
-            <span class="reject-val">{{ item.value }} kg</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Row 3: Inventory Status + Recent Activity + Quick Actions -->
-    <div class="dashboard-grid">
-
-      <div class="dash-card">
-        <div class="card-header">
-          <h3 class="card-title">📦 Inventory Status</h3>
-          <router-link to="/summary/inventory" class="card-link">Details →</router-link>
-        </div>
-        <div class="status-list">
-          <div class="status-item" v-for="s in inventoryStatus" :key="s.label">
-            <div class="status-top">
-              <span class="status-label">{{ s.label }}</span>
-              <span class="status-val">{{ s.value }}</span>
+        <!-- Stat Cards Row -->
+        <div class="stats-grid">
+            <div class="stat-card" v-for="stat in stats" :key="stat.label">
+                <div class="stat-icon">
+                    {{ stat.icon }}
+                </div>
+                <div class="stat-body">
+                    <div class="stat-value">{{ stat.value }}</div>
+                    <div class="stat-label">{{ stat.label }}</div>
+                </div>
+                <div class="stat-badge" :class="stat.trend > 0 ? 'up' : 'down'">
+                    {{ stat.trend > 0 ? '▲' : '▼' }} {{ Math.abs(stat.trend) }}%
+                </div>
             </div>
-            <div class="status-bar-bg">
-              <div class="status-bar-fill" :style="{ width: s.pct + '%', background: s.color }"></div>
+        </div>
+
+        <div class="dash-card full-width-card mb">
+            <div class="card-header">
+                <h3 class="card-title">Inventory System Quick Info</h3>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="dash-card">
-        <div class="card-header">
-          <h3 class="card-title">🕐 Recent Activity</h3>
-          <router-link to="/summary/scanning" class="card-link">View All →</router-link>
-        </div>
-        <ul class="activity-list">
-          <li class="activity-item" v-for="item in recentActivity" :key="item.id">
-            <span class="activity-dot" :class="item.type"></span>
-            <div class="activity-info">
-              <span class="activity-text">{{ item.text }}</span>
-              <span class="activity-time">{{ item.time }}</span>
+            <div class="footer-info">
+                <span class="footer-item">Latest Daily Check File: <strong>—</strong></span>
+                <span class="footer-item">Total Work Order Count: <strong>—</strong>
+                    <span class="info-icon">ℹ️<span class="tooltip">Re-upload latest daily check file if total work order falls below 5,000.</span></span>
+                </span>
             </div>
-          </li>
-        </ul>
-      </div>
-
-      <div class="dash-card">
-        <div class="card-header">
-          <h3 class="card-title">⚡ Quick Actions</h3>
         </div>
-        <div class="shortcuts-grid">
-          <router-link v-for="sc in shortcuts" :key="sc.label" :to="sc.to" class="shortcut-item">
-            <span class="shortcut-icon">{{ sc.icon }}</span>
-            <span class="shortcut-label">{{ sc.label }}</span>
-          </router-link>
-        </div>
-      </div>
 
+        <div class="dash-card full-width-card mb">
+            <div class="card-header">
+                <h3 class="card-title">🔍 Mixing Prevention Model Scan History</h3>
+                <!-- <router-link to="/summary/scanning" class="card-link">View All →</router-link> -->
+            </div>
+            <div class="table-placeholder">
+                <table class="preview-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Date/Time</th>
+                            <th>Area</th>
+                            <th>Work Order</th>
+                            <th>Model Name</th>
+                            <th>Lot No.</th>
+                            <th>Quantity</th>
+                            <th>IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="n in 5" :key="n">
+                            <td><div class="skel short"></div></td>
+                            <td><div class="skel"></div></td>
+                            <td><div class="skel short"></div></td>
+                            <td><div class="skel short"></div></td>
+                            <td><div class="skel"></div></td>
+                            <td><div class="skel"></div></td>
+                            <td><div class="skel short"></div></td>
+                            <td><div class="skel"></div></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Row 2: Reject Charts side by side -->
+        <div class="charts-row mb">
+
+            <!-- Reject Per Description (pcs) -->
+            <div class="dash-card">
+                <div class="card-header">
+                    <h3 class="card-title">📊 Reject Description (pcs)</h3>
+                    <span class="card-date">—</span>
+                </div>
+                <div class="chart-area">
+                    <div class="chart-label-y">Reject (pcs)</div>
+                    <div class="chart-mock-bars">
+                        <div v-for="n in 10" :key="n" class="mock-bar pcs" :style="{ height: (15 + (n * 7) % 70) + '%' }"></div>
+                    </div>
+                </div>
+                <div class="reject-list">
+                    <div class="reject-item" v-for="item in rejectItemsPcs" :key="item.label">
+                        <span class="reject-dot" :style="{ background: item.color }"></span>
+                        <span class="reject-label">{{ item.label }}</span>
+                        <span class="reject-val">{{ item.value }} pcs</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reject Per Description (kg) -->
+            <div class="dash-card">
+                <div class="card-header">
+                    <h3 class="card-title">⚖️ Reject Description (kg)</h3>
+                    <span class="card-date">—</span>
+                </div>
+                <div class="chart-area">
+                    <div class="chart-label-y">Reject (kg)</div>
+                    <div class="chart-mock-bars">
+                        <div v-for="n in 10" :key="n" class="mock-bar kg" :style="{ height: (10 + (n * 11) % 75) + '%' }"></div>
+                    </div>
+                </div>
+                <div class="reject-list">
+                    <div class="reject-item" v-for="item in rejectItemsKg" :key="item.label">
+                        <span class="reject-dot" :style="{ background: item.color }"></span>
+                        <span class="reject-label">{{ item.label }}</span>
+                        <span class="reject-val">{{ item.value }} kg</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Row 3: Inventory Status + Recent Activity + Quick Actions -->
+        <div class="dashboard-grid">
+
+            <div class="dash-card">
+                <div class="card-header">
+                    <h3 class="card-title">📦 Inventory Status</h3>
+                    <router-link to="/summary/inventory" class="card-link">Details →</router-link>
+                </div>
+                <div class="status-list">
+                    <div class="status-item" v-for="s in inventoryStatus" :key="s.label">
+                        <div class="status-top">
+                            <span class="status-label">{{ s.label }}</span>
+                            <span class="status-val">{{ s.value }}</span>
+                        </div>
+                        <div class="status-bar-bg">
+                            <div class="status-bar-fill" :style="{ width: s.pct + '%', background: s.color }"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dash-card">
+                <div class="card-header">
+                    <h3 class="card-title">🕐 Recent Activity</h3>
+                    <router-link to="/summary/scanning" class="card-link">View All →</router-link>
+                </div>
+                <ul class="activity-list">
+                    <li class="activity-item" v-for="item in recentActivity" :key="item.id">
+                        <span class="activity-dot" :class="item.type"></span>
+                        <div class="activity-info">
+                            <span class="activity-text">{{ item.text }}</span>
+                            <span class="activity-time">{{ item.time }}</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="dash-card">
+                <div class="card-header">
+                    <h3 class="card-title">⚡ Quick Actions</h3>
+                </div>
+                <div class="shortcuts-grid">
+                    <router-link v-for="sc in shortcuts" :key="sc.label" :to="sc.to" class="shortcut-item">
+                        <span class="shortcut-icon">{{ sc.icon }}</span>
+                        <span class="shortcut-label">{{ sc.label }}</span>
+                    </router-link>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
-export default {
-  name: 'DashboardSummary',
-  data() {
-    return {
-      stats: [
-        { icon: '📦', label: 'Total Inventory', value: '—', trend: 0 },
-        { icon: '📱', label: 'Scans Today',      value: '—', trend: 0 },
-        { icon: '⚠️', label: 'Pending Process',  value: '—', trend: 0 },
-        { icon: '✅', label: 'Completed Today',  value: '—', trend: 0 },
-      ],
-      rejectItemsPcs: [
-        { label: 'Black Chipping',    value: '—', color: '#9f7aea' },
-        { label: 'Chipping',          value: '—', color: '#48bb78' },
-        { label: 'Crack',             value: '—', color: '#f6ad55' },
-        { label: 'Dim Out (T)',       value: '—', color: '#2b6cb0' },
-        { label: 'Dimension Out (W)', value: '—', color: '#e53e3e' },
-        { label: 'Kurokawa',          value: '—', color: '#718096' },
-        { label: 'Loss (std)',        value: '—', color: '#38a169' },
-        { label: 'Others',            value: '—', color: '#d69e2e' },
-      ],
-      rejectItemsKg: [
-        { label: 'Black Chipping',    value: '—', color: '#9f7aea' },
-        { label: 'Chipping',          value: '—', color: '#48bb78' },
-        { label: 'Crack',             value: '—', color: '#f6ad55' },
-        { label: 'Dim Out (T)',       value: '—', color: '#2b6cb0' },
-        { label: 'Dimension Out (W)', value: '—', color: '#e53e3e' },
-        { label: 'Kurokawa',          value: '—', color: '#718096' },
-        { label: 'Loss (std)',        value: '—', color: '#38a169' },
-        { label: 'Others',            value: '—', color: '#d69e2e' },
-      ],
-      recentActivity: [
-        { id: 1, type: 'scan',    text: 'Single scan completed — Lot #A1023', time: 'Just now'   },
-        { id: 2, type: 'process', text: 'Process updated — Line B',           time: '5 min ago'  },
-        { id: 3, type: 'alert',   text: 'Wrong process flagged — Lot #B0891', time: '12 min ago' },
-        { id: 4, type: 'scan',    text: 'Multiple scan — 14 items',           time: '20 min ago' },
-        { id: 5, type: 'process', text: 'Endorsed to inspection — Lot #C003', time: '1 hr ago'   },
-      ],
-      inventoryStatus: [
-        { label: 'In Process', value: '—', pct: 0, color: '#2b82cb' },
-        { label: 'Received',   value: '—', pct: 0, color: '#38a169' },
-        { label: 'Pending',    value: '—', pct: 0, color: '#d69e2e' },
-        { label: 'Rejected',   value: '—', pct: 0, color: '#e53e3e' },
-      ],
-      shortcuts: [
-        { icon: '📱', label: 'Single Scan',    to: '/scan/single'         },
-        { icon: '📊', label: 'Multiple Scan',  to: '/scan/multiple'       },
-        { icon: '🗺️', label: 'Route Scan',     to: '/scan/route'          },
-        { icon: '📋', label: 'Inventory',      to: '/summary/inventory'   },
-        { icon: '📤', label: 'Upload Files',   to: '/options/upload'      },
-        { icon: '🖨️', label: 'Print Endorse',  to: '/summary/endorsement' },
-        { icon: '🔓', label: 'Unlock Process', to: '/options/unlock'      },
-        { icon: '⏱️', label: 'Process Time',   to: '/process-time'        },
-      ]
+    export default {
+        name: 'DashboardSummary',
+        data() {
+            return {
+                stats: [
+                    { icon: '📦', label: 'Total Inventory', value: '—', trend: 0 },
+                    { icon: '📱', label: 'Scans Today',      value: '—', trend: 0 },
+                    { icon: '⚠️', label: 'Pending Process',  value: '—', trend: 0 },
+                    { icon: '✅', label: 'Completed Today',  value: '—', trend: 0 },
+                ],
+                rejectItemsPcs: [
+                    { label: 'Black Chipping',    value: '—', color: '#9f7aea' },
+                    { label: 'Chipping',          value: '—', color: '#48bb78' },
+                    { label: 'Crack',             value: '—', color: '#f6ad55' },
+                    { label: 'Dim Out (T)',       value: '—', color: '#2b6cb0' },
+                    { label: 'Dimension Out (W)', value: '—', color: '#e53e3e' },
+                    { label: 'Kurokawa',          value: '—', color: '#718096' },
+                    { label: 'Loss (std)',        value: '—', color: '#38a169' },
+                    { label: 'Others',            value: '—', color: '#d69e2e' },
+                ],
+                rejectItemsKg: [
+                    { label: 'Black Chipping',    value: '—', color: '#9f7aea' },
+                    { label: 'Chipping',          value: '—', color: '#48bb78' },
+                    { label: 'Crack',             value: '—', color: '#f6ad55' },
+                    { label: 'Dim Out (T)',       value: '—', color: '#2b6cb0' },
+                    { label: 'Dimension Out (W)', value: '—', color: '#e53e3e' },
+                    { label: 'Kurokawa',          value: '—', color: '#718096' },
+                    { label: 'Loss (std)',        value: '—', color: '#38a169' },
+                    { label: 'Others',            value: '—', color: '#d69e2e' },
+                ],
+                recentActivity: [
+                    { id: 1, type: 'scan',    text: 'Single scan completed — Lot #A1023', time: 'Just now'   },
+                    { id: 2, type: 'process', text: 'Process updated — Line B',           time: '5 min ago'  },
+                    { id: 3, type: 'alert',   text: 'Wrong process flagged — Lot #B0891', time: '12 min ago' },
+                    { id: 4, type: 'scan',    text: 'Multiple scan — 14 items',           time: '20 min ago' },
+                    { id: 5, type: 'process', text: 'Endorsed to inspection — Lot #C003', time: '1 hr ago'   },
+                ],
+                inventoryStatus: [
+                    { label: 'In Process', value: '—', pct: 0, color: '#2b82cb' },
+                    { label: 'Received',   value: '—', pct: 0, color: '#38a169' },
+                    { label: 'Pending',    value: '—', pct: 0, color: '#d69e2e' },
+                    { label: 'Rejected',   value: '—', pct: 0, color: '#e53e3e' },
+                ],
+                shortcuts: [
+                    { icon: '📱', label: 'Single Scan',    to: '/scan/single'         },
+                    { icon: '📊', label: 'Multiple Scan',  to: '/scan/multiple'       },
+                    { icon: '🗺️', label: 'Route Scan',     to: '/scan/route'          },
+                    { icon: '📋', label: 'Inventory',      to: '/summary/inventory'   },
+                    { icon: '📤', label: 'Upload Files',   to: '/options/upload'      },
+                    { icon: '🖨️', label: 'Print Endorse',  to: '/summary/endorsement' },
+                    { icon: '🔓', label: 'Unlock Process', to: '/options/unlock'      },
+                    { icon: '⏱️', label: 'Process Time',   to: '/process-time'        },
+                ]
+            }
+        }
     }
-  }
-}
 </script>
 
 <style scoped>

@@ -1,180 +1,180 @@
 <template>
-  <nav class="navbar-alt1">
-    <div class="nav-container">
-      <div class="nav-left">
-        <a href="/" class="brand">
-          <img src="/images/is2.png" alt="Logo" class="logo" title="Inventory System"/>
-          <span class="brand-text">Inventory System</span>
-        </a>
-      </div>
-
-      <div class="nav-center">
-        <div class="search-wrapper">
-          <span class="search-icon">🔍</span>
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search for Lot Number or Work Order ID"
-            class="search-input-alt"
-            @keyup.enter="handleSearch"
-          />
-          <kbd class="search-kbd">Enter</kbd>
-        </div>
-      </div>
-
-      <div class="nav-right">
-        <Link href="/scan/single" class="quick-scan-btn" title="Single Scan">
-            <span>📱</span>
-            <span>Single Scan</span>
-        </Link>
-        <div class="ip-card">
-          <div v-if="loading" class="spinner"></div>
-          <template v-else-if="ipData">
-            <div class="ip-row">
-              <span class="badge badge-blue">IP</span>
-              <span class="ip-text">{{ ipData.ip }}</span>
+    <nav class="navbar-alt1">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="/" class="brand">
+                <img src="/images/is2.png" alt="Logo" class="logo" title="Inventory System"/>
+                <span class="brand-text">Inventory System</span>
+                </a>
             </div>
-            <div class="ip-row">
-              <span class="badge badge-green">📍</span>
-              <span class="ip-text">{{ ipData.location }}</span>
+
+            <div class="nav-center">
+                <div class="search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input
+                    v-model="searchQuery"
+                    type="text"
+                    placeholder="Search for Lot Number or Work Order ID"
+                    class="search-input-alt"
+                    @keyup.enter="handleSearch"
+                />
+                <kbd class="search-kbd">Enter</kbd>
+                </div>
             </div>
-          </template>
+
+            <div class="nav-right">
+                <Link href="/scan/single" class="quick-scan-btn" title="Single Scan">
+                    <span>📱</span>
+                    <span>Single Scan</span>
+                </Link>
+                <div class="ip-card">
+                    <div v-if="loading" class="spinner"></div>
+                    <template v-else-if="ipData">
+                        <div class="ip-row">
+                        <span class="badge badge-blue">IP</span>
+                        <span class="ip-text">{{ ipData.ip }}</span>
+                        </div>
+                        <div class="ip-row">
+                        <span class="badge badge-green">📍</span>
+                        <span class="ip-text">{{ ipData.location }}</span>
+                        </div>
+                    </template>
+                </div>
+
+                <button class="menu-toggle" @click="toggleMenu">
+                    <span class="hamburger-line" :class="{ active: isMenuOpen }"></span>
+                    <span class="hamburger-line" :class="{ active: isMenuOpen }"></span>
+                    <span class="hamburger-line" :class="{ active: isMenuOpen }"></span>
+                </button>
+            </div>
         </div>
 
-        <button class="menu-toggle" @click="toggleMenu">
-          <span class="hamburger-line" :class="{ active: isMenuOpen }"></span>
-          <span class="hamburger-line" :class="{ active: isMenuOpen }"></span>
-          <span class="hamburger-line" :class="{ active: isMenuOpen }"></span>
-        </button>
-      </div>
-    </div>
+        <div class="mega-menu" :class="{ 'is-active': isMenuOpen }">
+            <div class="menu-grid">
+                <div class="menu-section">
+                    <h3 class="section-title">Quick Actions</h3>
+                    <Link href="/" class="menu-item-alt">
+                        <span class="item-icon">🏠</span>
+                        <span>Home</span>
+                    </Link>
+                    <Link href="/ProcessTime" class="menu-item-alt">
+                        <span class="item-icon">⏱️</span>
+                        <span>Process Time</span>
+                    </Link>
+                </div>
 
-    <div class="mega-menu" :class="{ 'is-active': isMenuOpen }">
-      <div class="menu-grid">
-        <div class="menu-section">
-          <h3 class="section-title">Quick Actions</h3>
-          <Link href="/" class="menu-item-alt">
-            <span class="item-icon">🏠</span>
-            <span>Home</span>
-          </Link>
-          <Link href="/ProcessTime" class="menu-item-alt">
-            <span class="item-icon">⏱️</span>
-            <span>Process Time</span>
-          </Link>
-        </div>
+                <div class="menu-section">
+                    <h3 class="section-title">Scanning</h3>
+                    <Link href="/scan/single" class="menu-item-alt">
+                        <span class="item-icon">📱</span>
+                        <span>Single Scan</span>
+                    </Link>
+                    <Link href="/scan/multiple" class="menu-item-alt">
+                        <span class="item-icon">📱</span>
+                        <span>Multiple Scan</span>
+                    </Link>
+                    <Link href="/scan/route" class="menu-item-alt">
+                        <span class="item-icon">🗺️</span>
+                        <span>Route Scan</span>
+                    </Link>
+                </div>
 
-        <div class="menu-section">
-          <h3 class="section-title">Scanning</h3>
-          <Link href="/scan/single" class="menu-item-alt">
-            <span class="item-icon">📱</span>
-            <span>Single Scan</span>
-          </Link>
-          <Link href="/scan/multiple" class="menu-item-alt">
-            <span class="item-icon">📱</span>
-            <span>Multiple Scan</span>
-          </Link>
-          <Link href="/scan/route" class="menu-item-alt">
-            <span class="item-icon">🗺️</span>
-            <span>Route Scan</span>
-          </Link>
-        </div>
+                <div class="menu-section">
+                    <h3 class="section-title">Summary Reports</h3>
+                    <Link href="/summary/inventory" class="menu-item-alt">Inventory Summary</Link>
+                    <Link href="/summary/nextprocess" class="menu-item-alt">Next Process Inventory</Link>
+                    <Link href="/summary/received" class="menu-item-alt">Received Summary</Link>
+                    <Link href="/summary/process" class="menu-item-alt">Process Summary</Link>
+                    <Link href="/summary/split" class="menu-item-alt">Split Summary</Link>
+                    <a href="#" class="show-more" @click.prevent="toggleSummaryExpand">
+                        {{ summaryExpanded ? 'Show Less' : `+${8} More Reports` }}
+                    </a>
+                    <template v-if="summaryExpanded">
+                        <Link href="/summary/temporary" class="menu-item-alt">Temporary Item Search</Link>
+                        <Link href="/summary/endorse" class="menu-item-alt">Endorsed</Link>
+                        <Link href="/summary/manualcheck" class="menu-item-alt">Manual Check</Link>
+                        <Link href="/summary/reject" class="menu-item-alt">Reject Lot Summary</Link>
+                        <Link href="/summary/machinetarget" class="menu-item-alt">Machine Target</Link>
+                        <Link href="/summary/firstprocess" class="menu-item-alt">First Process Output</Link>
+                        <Link href="/summary/scanning" class="menu-item-alt">Scanning Summary</Link>
+                        <Link href="/summary/rawmaterials" class="menu-item-alt">RM Blocks Traceability</Link>
+                    </template>
+                </div>
 
-        <div class="menu-section">
-          <h3 class="section-title">Summary Reports</h3>
-          <Link href="/summary/inventory" class="menu-item-alt">Inventory Summary</Link>
-          <Link href="/summary/nextprocess" class="menu-item-alt">Next Process Inventory</Link>
-          <Link href="/summary/received" class="menu-item-alt">Received Summary</Link>
-          <Link href="/summary/process" class="menu-item-alt">Process Summary</Link>
-          <Link href="/summary/split" class="menu-item-alt">Split Summary</Link>
-          <a href="#" class="show-more" @click.prevent="toggleSummaryExpand">
-            {{ summaryExpanded ? 'Show Less' : `+${8} More Reports` }}
-          </a>
-          <template v-if="summaryExpanded">
-            <Link href="/summary/temporary" class="menu-item-alt">Temporary Item Search</Link>
-            <Link href="/summary/endorse" class="menu-item-alt">Endorsed</Link>
-            <Link href="/summary/manualcheck" class="menu-item-alt">Manual Check</Link>
-            <Link href="/summary/reject" class="menu-item-alt">Reject Lot Summary</Link>
-            <Link href="/summary/machinetarget" class="menu-item-alt">Machine Target</Link>
-            <Link href="/summary/firstprocess" class="menu-item-alt">First Process Output</Link>
-            <Link href="/summary/scanning" class="menu-item-alt">Scanning Summary</Link>
-            <Link href="/summary/rawmaterials" class="menu-item-alt">RM Blocks Traceability</Link>
-          </template>
+                <div class="menu-section">
+                    <h3 class="section-title">Options & Settings</h3>
+                    <Link href="/options/register" class="menu-item-alt">Register Temporary Item</Link>
+                    <Link href="/options/createbarcode" class="menu-item-alt">Create QR/Bar Code</Link>
+                    <Link href="/options/upload" class="menu-item-alt">Upload Files</Link>
+                    <Link href="/options/remarks" class="menu-item-alt">Hourly Remarks</Link>
+                    <a href="#" class="show-more" @click.prevent="toggleOptionsExpand">
+                        {{ optionsExpanded ? 'Show Less' : `+${9} More Options` }}
+                    </a>
+                    <template v-if="optionsExpanded">
+                        <Link href="/options/endorsement" class="menu-item-alt">Print Endorsement Sheet</Link>
+                        <Link href="/options/processtemplate" class="menu-item-alt">Edit Inventory Process Template</Link>
+                        <Link href="/options/processlist" class="menu-item-alt">Edit Process List</Link>
+                        <Link href="/options/qareceived" class="menu-item-alt">Check QA Received</Link>
+                        <Link href="/options/unlock" class="menu-item-alt">Unlock Wrong Process</Link>
+                        <Link href="/options/wptrend" class="menu-item-alt">Wrong Process Trend</Link>
+                        <Link href="/options/weightfirstprocess" class="menu-item-alt">Weight & First Process</Link>
+                        <Link href="/options/proto" class="menu-item-alt">Generate Prototype Traveler</Link>
+                        <Link href="/options/keepingtime" class="menu-item-alt">Update Magnet Keeping Time</Link>
+                    </template>
+                </div>
+            </div>
         </div>
-
-        <div class="menu-section">
-          <h3 class="section-title">Options & Settings</h3>
-          <Link href="/options/register" class="menu-item-alt">Register Temporary Item</Link>
-          <Link href="/options/createbarcode" class="menu-item-alt">Create QR/Bar Code</Link>
-          <Link href="/options/upload" class="menu-item-alt">Upload Files</Link>
-          <Link href="/options/remarks" class="menu-item-alt">Hourly Remarks</Link>
-          <a href="#" class="show-more" @click.prevent="toggleOptionsExpand">
-            {{ optionsExpanded ? 'Show Less' : `+${9} More Options` }}
-          </a>
-          <template v-if="optionsExpanded">
-            <Link href="/options/endorsement" class="menu-item-alt">Print Endorsement Sheet</Link>
-            <Link href="/options/processtemplate" class="menu-item-alt">Edit Inventory Process Template</Link>
-            <Link href="/options/processlist" class="menu-item-alt">Edit Process List</Link>
-            <Link href="/options/qareceived" class="menu-item-alt">Check QA Received</Link>
-            <Link href="/options/unlock" class="menu-item-alt">Unlock Wrong Process</Link>
-            <Link href="/options/wptrend" class="menu-item-alt">Wrong Process Trend</Link>
-            <Link href="/options/weightfirstprocess" class="menu-item-alt">Weight & First Process</Link>
-            <Link href="/options/proto" class="menu-item-alt">Generate Prototype Traveler</Link>
-            <Link href="/options/keepingtime" class="menu-item-alt">Update Magnet Keeping Time</Link>
-          </template>
-        </div>
-      </div>
-    </div>
-  </nav>
+    </nav>
 </template>
 
 <script>
-import { Link } from '@inertiajs/vue3'
+    import { Link } from '@inertiajs/vue3'
 
-export default {
-  components: { Link },
-  name: 'Navbar',
-  data() {
-    return {
-      isMenuOpen: false,
-      ipData: null,
-      loading: true,
-      searchQuery: '',
-      summaryExpanded: false,
-      optionsExpanded: false
+    export default {
+        components: { Link },
+        name: 'Navbar',
+        data() {
+            return {
+                isMenuOpen: false,
+                ipData: null,
+                loading: true,
+                searchQuery: '',
+                summaryExpanded: false,
+                optionsExpanded: false
+            }
+        },
+        mounted() {
+            this.fetchIpLocation()
+        },
+        methods: {
+            handleSearch() {
+            if (!this.searchQuery.trim()) return
+            this.$router.push({ path: '/search', query: { q: this.searchQuery } })
+            this.searchQuery = ''
+            },
+            toggleMenu() {
+            this.isMenuOpen = !this.isMenuOpen
+            },
+            toggleSummaryExpand() {
+            this.summaryExpanded = !this.summaryExpanded
+            },
+            toggleOptionsExpand() {
+            this.optionsExpanded = !this.optionsExpanded
+            },
+            async fetchIpLocation() {
+                try {
+                    const response = await fetch('/api/ip-details')
+                    if (!response.ok) throw new Error('Failed to fetch IP data')
+                    const data = await response.json()
+                    this.ipData = data
+                    this.loading = false
+                } catch (error) {
+                    console.error('Error fetching IP location:', error)
+                    this.loading = false
+                }
+            }
+        }
     }
-  },
-  mounted() {
-    this.fetchIpLocation()
-  },
-  methods: {
-    handleSearch() {
-      if (!this.searchQuery.trim()) return
-      this.$router.push({ path: '/search', query: { q: this.searchQuery } })
-      this.searchQuery = ''
-    },
-    toggleMenu() {
-      this.isMenuOpen = !this.isMenuOpen
-    },
-    toggleSummaryExpand() {
-      this.summaryExpanded = !this.summaryExpanded
-    },
-    toggleOptionsExpand() {
-      this.optionsExpanded = !this.optionsExpanded
-    },
-    async fetchIpLocation() {
-      try {
-        const response = await fetch('/api/ip-details')
-        if (!response.ok) throw new Error('Failed to fetch IP data')
-        const data = await response.json()
-        this.ipData = data
-        this.loading = false
-      } catch (error) {
-        console.error('Error fetching IP location:', error)
-        this.loading = false
-      }
-    }
-  }
-}
 </script>
 
 <style scoped>

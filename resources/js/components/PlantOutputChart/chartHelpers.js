@@ -137,79 +137,79 @@ export function buildChartData(rawData, today, dayLabels, targets, currentMonthN
 }
 
 export function buildChartOptions() {
-return {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-    customLineBase: true,
-    legend: { display: false },
-    tooltip: {
-        backgroundColor: '#112240',
-        titleColor: '#5ba3e0',
-        bodyColor: '#c8d8e8',
-        borderColor: 'rgba(43,130,203,0.3)',
-        borderWidth: 1,
-        padding: 12,
-        callbacks: {
-        label(ctx) {
-            return ` ${ctx.dataset.label}: ${ctx.parsed.y} t`
-        },
-        footer(items) {
-            const barItems = items.filter(i => i.dataset.type === 'bar')
-            if (!barItems.length) return ''
-            const total = barItems.reduce((sum, i) => sum + i.parsed.y, 0)
-            return `Total: ${total.toFixed(2)} t`
-        }
-        }
-    },
-    },
-    scales: {
-    x: {
-        stacked: true,
-        grid: { color: 'rgba(255,255,255,0.04)' },
-        ticks: { color: '#8899aa', font: { size: 11 } },
-        border: { color: 'rgba(255,255,255,0.08)' }
-    },
-    y: {
-        stacked: true,
-        grid: { color: 'rgba(255,255,255,0.06)' },
-        ticks: {
-        color: '#8899aa',
-        font: { size: 11 },
-        callback: (val) => `${val}t`,
-        },
-        border: { color: 'rgba(255,255,255,0.08)' },
-        title: {
-        display: true,
-        text: 'Output (tons)',
-        color: '#8899aa',
-        font: { size: 11 },
-        }
-    },
-    y2: {
-        stacked: false,
-        display: false,
-        grid:    { drawOnChartArea: false },
-        afterDataLimits(axis) {
-            const yAxis = axis.chart.scales['y']
-            if (yAxis) {
-                axis.min = yAxis.min
-                axis.max = yAxis.max
+    return {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+        customLineBase: true,
+        legend: { display: false },
+        tooltip: {
+            backgroundColor: '#112240',
+            titleColor: '#5ba3e0',
+            bodyColor: '#c8d8e8',
+            borderColor: 'rgba(43,130,203,0.3)',
+            borderWidth: 1,
+            padding: 12,
+            callbacks: {
+            label(ctx) {
+                return ` ${ctx.dataset.label}: ${ctx.parsed.y} t`
+            },
+            footer(items) {
+                const barItems = items.filter(i => i.dataset.type === 'bar')
+                if (!barItems.length) return ''
+                const total = barItems.reduce((sum, i) => sum + i.parsed.y, 0)
+                return `Total: ${total.toFixed(2)} t`
+            }
             }
         },
-        ticks: {
+        },
+        scales: {
+        x: {
+            stacked: true,
+            grid: { color: 'rgba(255,255,255,0.04)' },
+            ticks: { color: '#8899aa', font: { size: 11 } },
+            border: { color: 'rgba(255,255,255,0.08)' }
+        },
+        y: {
+            stacked: true,
+            grid: { color: 'rgba(255,255,255,0.06)' },
+            ticks: {
             color: '#8899aa',
             font: { size: 11 },
             callback: (val) => `${val}t`,
+            },
+            border: { color: 'rgba(255,255,255,0.08)' },
+            title: {
+            display: true,
+            text: 'Output (tons)',
+            color: '#8899aa',
+            font: { size: 11 },
+            }
         },
-        border: { color: 'rgba(255,255,255,0.08)' },
+        y2: {
+            stacked: false,
+            display: false,
+            grid:    { drawOnChartArea: false },
+            afterDataLimits(axis) {
+                const yAxis = axis.chart.scales['y']
+                if (yAxis) {
+                    axis.min = yAxis.min
+                    axis.max = yAxis.max
+                }
+            },
+            ticks: {
+                color: '#8899aa',
+                font: { size: 11 },
+                callback: (val) => `${val}t`,
+            },
+            border: { color: 'rgba(255,255,255,0.08)' },
+        }
+        },
+        animation: {
+        duration: 600,
+        easing: 'easeInOutQuart',
+        },
     }
-    },
-    animation: {
-    duration: 600,
-    easing: 'easeInOutQuart',
-    },
-}
 }
 
 export function buildMonthlySummaries(rawData, targets = {}, allMonths = {}, dailyTargets = {}) {

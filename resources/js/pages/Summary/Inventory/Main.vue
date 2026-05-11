@@ -14,9 +14,9 @@
     import AppLayout      from '@/Layouts/AppLayout.vue'
 
     export default {
-    layout:     AppLayout,
-    name:       'InventoryMain',
-    components: { NavBarOld, InventoryGraph },
+        layout:     AppLayout,
+        name:       'InventoryMain',
+        components: { NavBarOld, InventoryGraph },
     }
 </script>
 
