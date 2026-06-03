@@ -17,6 +17,7 @@ class InventoryWipController extends Controller
         return match($plant) {
             'main'   => 'main',
             'plant7' => 'plant7',
+            'plant7-2nd' => 'plant7-2nd',
             'plant8-1st' => 'plant8-1st',
             'plant8-2nd' => 'plant8-2nd',
             default  => ucfirst($plant),
