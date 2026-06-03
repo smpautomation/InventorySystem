@@ -2,9 +2,9 @@
     <div class="page">
         <div class="page-header">
             <div class="eyebrow">WIP Inventory</div>
-            <h2 class="title">Plant 7 1st Machining<span class="title-unit">Daily WIP</span></h2>
+            <h2 class="title">Plant 7 2nd Machining <span class="title-unit">Daily WIP</span></h2>
         </div>
-        <InventoryGraph plant="plant7" />
+        <InventoryGraph plant="plant7-2nd" />
     </div>
 </template>
 
@@ -15,7 +15,7 @@
 
     export default {
         layout:     AppLayout,
-        name:       'InventoryPlant7-1stMachining',
+        name:       'InventoryPlant7-2ndMachining',
         components: { NavBarOld, InventoryGraph },
     }
 </script>

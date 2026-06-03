@@ -28,6 +28,9 @@ Route::get('/summary/inventory/main', function () {
 Route::get('/summary/inventory/plant7', function () {
     return Inertia::render('Summary/Inventory/Plant7');
 })->name('summary.inventory.plant7');
+Route::get('/summary/inventory/plant7-2nd', function () {
+    return Inertia::render('Summary/Inventory/Plant7-2nd');
+})->name('summary.inventory.plant7-2nd');
 Route::get('/summary/inventory/plant8-1st', function () {
     return Inertia::render('Summary/Inventory/Plant8-1st');
 })->name('summary.inventory.plant8-1st');
@@ -41,6 +44,9 @@ Route::get('/summary/tons/main', function () {
 Route::get('/summary/tons/plant7', function () {
     return Inertia::render('Summary/Tons/Plant7');
 })->name('summary.tons.plant7');
+Route::get('/summary/tons/plant7-2nd', function () {
+    return Inertia::render('Summary/Tons/Plant7-2nd');
+})->name('summary.tons.plant7-2nd');
 Route::get('/summary/tons/plant8-1st', function () {
     return Inertia::render('Summary/Tons/Plant8-1st');
 })->name('summary.tons.plant8-1st');
@@ -49,18 +55,18 @@ Route::get('/summary/tons/plant8-2nd', function () {
 })->name('summary.tons.plant8-2nd');
 
 
-Route::get('/summary/pieces/main', function () {
-    return Inertia::render('Summary/Pieces/Main');
-})->name('summary.pieces.main');
-Route::get('/summary/pieces/plant7', function () {
-    return Inertia::render('Summary/Pieces/Plant7');
-})->name('summary.pieces.plant7');
-Route::get('/summary/pieces/plant8-1st', function () {
-    return Inertia::render('Summary/Pieces/Plant8-1st');
-})->name('summary.pieces.plant8-1st');
-Route::get('/summary/pieces/plant8-2nd', function () {
-    return Inertia::render('Summary/Pieces/Plant8-2nd');
-})->name('summary.pieces.plant8-2nd');
+// Route::get('/summary/pieces/main', function () {
+//     return Inertia::render('Summary/Pieces/Main');
+// })->name('summary.pieces.main');
+// Route::get('/summary/pieces/plant7', function () {
+//     return Inertia::render('Summary/Pieces/Plant7');
+// })->name('summary.pieces.plant7');
+// Route::get('/summary/pieces/plant8-1st', function () {
+//     return Inertia::render('Summary/Pieces/Plant8-1st');
+// })->name('summary.pieces.plant8-1st');
+// Route::get('/summary/pieces/plant8-2nd', function () {
+//     return Inertia::render('Summary/Pieces/Plant8-2nd');
+// })->name('summary.pieces.plant8-2nd');
 Route::get('/summary/pieces/ncp2', function () {
     return Inertia::render('Summary/Pieces/NCP2');
 })->name('summary.pieces.ncp2');

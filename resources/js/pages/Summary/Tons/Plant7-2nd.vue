@@ -1,8 +1,8 @@
 <template>
     <PlantOutputChart
-        title="Output by Plant 7 1st Machining"
-        eyebrow="Plant 7 1st Machining Monthly Output"
-        plant="plant7"
+        title="Output by Plant 7 2nd Machining"
+        eyebrow="Plant 7 2nd Machining Monthly Output"
+        plant="plant7-2nd"
         :raw-data="rawData"
         :targets="targets"
         :all-months="allMonths"
@@ -19,7 +19,7 @@
 
     export default {
         layout: AppLayout,
-        name: 'Plant 7 1st Machining',
+        name: 'Plant 7 2nd Machining',
         components: { PlantOutputChart },
         setup() {
             const { fetchYear, fetchTargets, fetchDailyTargets, invalidate, invalidateTargets, invalidateDailyTargets, loading, error } = usePlantOutput()
@@ -37,9 +37,9 @@
                 const month = now.getMonth() + 1
 
                 const [results, fetchedTargets, fetchedDailyTargets] = await Promise.all([
-                fetchYear('plant7', year),
-                fetchTargets('plant7', year),
-                fetchDailyTargets('plant7', year, month),
+                fetchYear('plant7-2nd', year),
+                fetchTargets('plant7-2nd', year),
+                fetchDailyTargets('plant7-2nd', year, month),
                 ])
 
                 targets.value      = fetchedTargets
@@ -58,16 +58,16 @@
 
             const reloadTargets = async () => {
                 const year = new Date().getFullYear()
-                invalidateTargets('plant7', year)
-                targets.value = await fetchTargets('plant7', year)
+                invalidateTargets('plant7-2nd', year)
+                targets.value = await fetchTargets('plant7-2nd', year)
             }
 
             const reloadDailyTargets = async () => {
                 const now   = new Date()
                 const year  = now.getFullYear()
                 const month = now.getMonth() + 1
-                invalidateDailyTargets('plant7', year, month)
-                dailyTargets.value = await fetchDailyTargets('plant7', year, month)
+                invalidateDailyTargets('plant7-2nd', year, month)
+                dailyTargets.value = await fetchDailyTargets('plant7-2nd', year, month)
             }
 
             onMounted(async () => {

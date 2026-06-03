@@ -151,9 +151,10 @@
                         </button>
                         <div class="submenu" :class="{ 'is-open': tonsReportsOpen }">
                             <Link href="/summary/tons/main" class="submenu-item">MAIN</Link>
-                            <Link href="/summary/tons/plant7" class="submenu-item">Plant 7</Link>
-                            <Link href="/summary/tons/plant8-1st" class="submenu-item">Plant 8 1st</Link>
-                            <Link href="/summary/tons/plant8-2nd" class="submenu-item">Plant 8 2nd</Link>
+                            <Link href="/summary/tons/plant7" class="submenu-item">Plant 7 1st Machining</Link>
+                            <Link href="/summary/tons/plant7-2nd" class="submenu-item">Plant 7 2nd Machining</Link>
+                            <Link href="/summary/tons/plant8-1st" class="submenu-item">Plant 8 1st Machining</Link>
+                            <Link href="/summary/tons/plant8-2nd" class="submenu-item">Plant 8 2nd Machining</Link>
                         </div>
                     </div>
 
@@ -183,9 +184,10 @@
                         </button>
                         <div class="submenu" :class="{ 'is-open': wipReportsOpen }">
                             <Link href="/summary/inventory/main" class="submenu-item">Main</Link>
-                            <Link href="/summary/inventory/plant7" class="submenu-item">Plant 7</Link>
-                            <Link href="/summary/inventory/plant8-1st" class="submenu-item">Plant 8 1st</Link>
-                            <Link href="/summary/inventory/plant8-2nd" class="submenu-item">Plant 8 2nd</Link>
+                            <Link href="/summary/inventory/plant7" class="submenu-item">Plant 7 1st Machining</Link>
+                            <Link href="/summary/inventory/plant7-2nd" class="submenu-item">Plant 7 2nd Machining</Link>
+                            <Link href="/summary/inventory/plant8-1st" class="submenu-item">Plant 8 1st Machining</Link>
+                            <Link href="/summary/inventory/plant8-2nd" class="submenu-item">Plant 8 2nd Machining</Link>
                         </div>
                     </div>
 
