@@ -2,7 +2,7 @@
     <div class="dashboard-wrapper">
 
         <!-- Stat Cards Row -->
-        <div class="stats-grid">
+        <!-- <div class="stats-grid">
             <div class="stat-card" v-for="stat in stats" :key="stat.label">
                 <div class="stat-icon">
                     {{ stat.icon }}
@@ -15,27 +15,35 @@
                     {{ stat.trend > 0 ? '▲' : '▼' }} {{ Math.abs(stat.trend) }}%
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <div class="dash-card full-width-card mb">
             <div class="card-header">
                 <h3 class="card-title">Inventory System Quick Info</h3>
             </div>
             <div class="footer-info">
-                <span class="footer-item">Latest Daily Check File: <strong>—</strong></span>
-                <span class="footer-item">Total Work Order Count: <strong>—</strong>
+                <span class="footer-item">Latest Daily Check File: <strong v-if="QuickInfo">{{ QuickInfo.Daily_Check_File }}</strong></span>
+                <span class="footer-item">Total Work Order Count:
+                    <strong
+                    :style="{ color: QuickInfo.Total_Rows > 5000 ? 'limegreen' : 'red' }"
+                    >
+                        {{ QuickInfo.Total_Rows }}
+                    </strong>
                     <span class="info-icon">ℹ️<span class="tooltip">Re-upload latest daily check file if total work order falls below 5,000.</span></span>
+                </span>
+                <span v-if="InventorySummaryPerArea.length <= 0" class="ml-120">
+                    <button class="chip">Show Inventory Per Area</button>
                 </span>
             </div>
         </div>
 
         <div class="dash-card full-width-card mb">
             <div class="card-header">
-                <h3 class="card-title">🔍 Mixing Prevention Model Scan History</h3>
+                <h3 class="card-title">Mixing Prevention Model Scan History</h3>
                 <!-- <router-link to="/summary/scanning" class="card-link">View All →</router-link> -->
             </div>
             <div class="table-placeholder">
-                <table class="preview-table">
+                <table class="preview-table fixed-table">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -48,7 +56,19 @@
                             <th>IP Address</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody v-if="MixingHistory.length">
+                        <tr v-for="(history, index) in MixingHistory" :key="index">
+                            <td>{{ index + 1 }}</td>
+                            <td>{{ history.Date_Time }}</td>
+                            <td>{{ history.Area }}</td>
+                            <td>{{ history.Work_Order }}</td>
+                            <td>{{ history.Model_Name }}</td>
+                            <td>{{ history.Lot_No }}</td>
+                            <td>{{ history.Quantity }}</td>
+                            <td>{{ history.IP_Address }}</td>
+                        </tr>
+                    </tbody>
+                    <tbody v-else>
                         <tr v-for="n in 5" :key="n">
                             <td><div class="skel short"></div></td>
                             <td><div class="skel"></div></td>
@@ -57,6 +77,62 @@
                             <td><div class="skel"></div></td>
                             <td><div class="skel"></div></td>
                             <td><div class="skel short"></div></td>
+                            <td><div class="skel"></div></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div v-if="InventorySummaryPerArea.length" class="dash-card full-width-card mb">
+            <div class="card-header">
+                <h3 class="card-title">Inventory Summary Per Area</h3>
+                <!-- <router-link to="/summary/scanning" class="card-link">View All →</router-link> -->
+            </div>
+            <div class="table-placeholder">
+                <table class="preview-table fixed-table">
+                    <thead>
+                        <tr>
+                            <th>Area</th>
+                            <th>Running<br>Inventory</th>
+                            <th>Work Order<br> ID Count</th>
+                            <th>Fresh Lot<br> Inventory</th>
+                            <th>Fresh Lot<br> ID Count</th>
+                            <th>Split Lot<br> Inventory</th>
+                            <th>Split Lot<br> ID Count</th>
+                            <th>Available on<br>Washing Area</th>
+                            <th>Endorsed to<br> Inspection</th>
+                            <th>Total Area<br> REceived</th>
+                            <th>Total Area<br> BCS OUT</th>
+                        </tr>
+                    </thead>
+                    <tbody v-if="InventorySummaryPerArea.length">
+                        <tr v-for="(summary, index) in InventorySummaryPerArea" :key="index">
+                            <td>{{ summary.Area }}</td>
+                            <td>{{ summary.total_qty }}</td>
+                            <td>{{ summary.total_count }}</td>
+                            <td>{{ summary.fresh_qty }}</td>
+                            <td>{{ summary.fresh_count }}</td>
+                            <td>{{ summary.split_qty }}</td>
+                            <td>{{ summary.split_count }}</td>
+                            <td>{{ summary.washing_qty }}</td>
+                            <td>{{ summary.endorsed_qty }}</td>
+                            <td>{{ summary.received_qty }}</td>
+                            <td>{{ summary.bcs_out_qty }}</td>
+                        </tr>
+                    </tbody>
+                    <tbody v-else>
+                        <tr v-for="n in 5" :key="n">
+                            <td><div class="skel short"></div></td>
+                            <td><div class="skel"></div></td>
+                            <td><div class="skel short"></div></td>
+                            <td><div class="skel short"></div></td>
+                            <td><div class="skel"></div></td>
+                            <td><div class="skel"></div></td>
+                            <td><div class="skel short"></div></td>
+                            <td><div class="skel"></div></td>
+                            <td><div class="skel short"></div></td>
+                            <td><div class="skel"></div></td>
                             <td><div class="skel"></div></td>
                         </tr>
                     </tbody>
@@ -88,6 +164,30 @@
                 </div>
             </div>
 
+            <!-- Reject Per Machine (pcs) -->
+            <div class="dash-card">
+                <div class="card-header">
+                    <h3 class="card-title">📊 Reject Per Machine (pcs)</h3>
+                    <span class="card-date">—</span>
+                </div>
+                <div class="chart-area">
+                    <div class="chart-label-y">Reject (pcs)</div>
+                    <div class="chart-mock-bars">
+                        <div v-for="n in 10" :key="n" class="mock-bar pcs" :style="{ height: (10 + (n * 11) % 75) + '%' }"></div>
+                    </div>
+                </div>
+                <div class="reject-list">
+                    <div class="reject-item" v-for="item in rejectItemsPcs" :key="item.label">
+                        <span class="reject-dot" :style="{ background: item.color }"></span>
+                        <span class="reject-label">{{ item.label }}</span>
+                        <span class="reject-val">{{ item.value }} pcs</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="charts-row mb">
             <!-- Reject Per Description (kg) -->
             <div class="dash-card">
                 <div class="card-header">
@@ -109,6 +209,26 @@
                 </div>
             </div>
 
+            <!-- Reject Per Machine (kg) -->
+            <div class="dash-card">
+                <div class="card-header">
+                    <h3 class="card-title">⚖️ Reject Per Machine (kg)</h3>
+                    <span class="card-date">—</span>
+                </div>
+                <div class="chart-area">
+                    <div class="chart-label-y">Reject (kg)</div>
+                    <div class="chart-mock-bars">
+                        <div v-for="n in 10" :key="n" class="mock-bar kg" :style="{ height: (10 + (n * 11) % 75) + '%' }"></div>
+                    </div>
+                </div>
+                <div class="reject-list">
+                    <div class="reject-item" v-for="item in rejectItemsKg" :key="item.label">
+                        <span class="reject-dot" :style="{ background: item.color }"></span>
+                        <span class="reject-label">{{ item.label }}</span>
+                        <span class="reject-val">{{ item.value }} kg</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Row 3: Inventory Status + Recent Activity + Quick Actions -->
@@ -216,7 +336,31 @@
                     { icon: '🖨️', label: 'Print Endorse',  to: '/summary/endorsement' },
                     { icon: '🔓', label: 'Unlock Process', to: '/options/unlock'      },
                     { icon: '⏱️', label: 'Process Time',   to: '/process-time'        },
-                ]
+                ],
+                MixingHistory: [],
+                QuickInfo: {},
+                InventorySummaryPerArea: []
+            }
+        },
+        async mounted() {
+            await this.fetchInitData()
+        },
+        methods: {
+            async fetchInitData(){
+                this.loading = true
+                this.error = null
+                try{
+                    const res = await fetch(`/api/home-dashboard`)
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+                    const json    = await res.json()
+                    this.MixingHistory = json.MixingHistory ?? []
+                    this.QuickInfo = json.QuickInfo ?? {}
+                    this.InventorySummaryPerArea = json.InventorySummaryPerArea ?? []
+                }catch(e){
+                    this.error = `Failed to load data: ${e.message}`
+                }finally{
+                    this.loading = false
+                }
             }
         }
     }
@@ -320,25 +464,57 @@
 
 .preview-table {
     width: 100%; border-collapse: collapse; font-size: 0.8rem;
+    color: #e8f0f7;
 }
 
 .preview-table th {
-  text-align: left;
-  padding: 0.6rem 0.75rem;
-  color: #5ba3e0;
-  font-weight: 600;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  border-bottom: 1px solid rgba(43,130,203,0.2);
-  white-space: nowrap;
+    text-align: left;
+    padding: 0.6rem 0.75rem;
+    color: #5ba3e0; /* Header text */
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid rgba(43,130,203,0.2);
+    white-space: nowrap;
 }
 
 .preview-table td {
     padding: 0.65rem 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: #c8d8e8;
 }
 .preview-table tr:hover td {
     background: rgba(43,130,203,0.05);
+}
+
+.fixed-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.fixed-table thead,
+.fixed-table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.fixed-table tbody {
+    display: block;
+    max-height: 240px; /* ~5 rows */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Optional scrollbar styling */
+.fixed-table tbody::-webkit-scrollbar {
+    width: 6px;
+}
+
+.fixed-table tbody::-webkit-scrollbar-thumb {
+    background: #2b82cb;
+    border-radius: 3px;
 }
 
 .skel {
@@ -558,6 +734,31 @@
   visibility: visible;
   opacity: 1;
 }
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.9rem;
+    background: rgba(43, 130, 203, 0.08);
+    border: 1px solid rgba(43, 130, 203, 0.25);
+    border-radius: 4px;
+    color: #e8f0f7;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .chip:hover {
+    background: rgba(43, 130, 203, 0.2);
+    border-color: #2b82cb;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(43, 130, 203, 0.2);
+  }
 
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
