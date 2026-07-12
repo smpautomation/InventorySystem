@@ -17,7 +17,8 @@ class PlantOutputController extends Controller
         $requestedMonth = $request->integer('month', $currentMonth);
         $isCurrent = $requestedYear  === $currentYear
                   && $requestedMonth === $currentMonth;
-        $ttl = $isCurrent ? now()->addHour() : now()->addWeek();
+        //$ttl = $isCurrent ? now()->addHour() : now()->addWeek();
+        $ttl = $isCurrent ? now()->addMinutes(15) : now()->addWeek();
         $cacheKey = "plant_output:{$plant}:{$requestedYear}:{$requestedMonth}";
         $data = Cache::remember($cacheKey, $ttl, function () use ($plant, $requestedYear, $requestedMonth, $cacheKey) {
             try {

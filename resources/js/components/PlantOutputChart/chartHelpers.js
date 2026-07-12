@@ -348,22 +348,22 @@ export function buildAreaChartData(area, rawData, today, targets, currentMonthNa
         })
     })
 
-    if (avgTargetData.some(v => v !== null)) {
-        datasets.push({
-            type:        'line',
-            label:       'Avg Daily Target',
-            data:        avgTargetData,
-            borderColor: '#F5DEB3',
-            backgroundColor: 'transparent',
-            borderWidth: 2,
-            borderDash:  [6, 4],
-            pointRadius: 0,
-            tension:     0,
-            stack:       'targets',
-            order:       -1,
-            spanGaps:    true,
-        })
-    }
+    // if (avgTargetData.some(v => v !== null)) {
+    //     datasets.push({
+    //         type:        'line',
+    //         label:       'Avg Daily Target',
+    //         data:        avgTargetData,
+    //         borderColor: '#F5DEB3',
+    //         backgroundColor: 'transparent',
+    //         borderWidth: 2,
+    //         borderDash:  [6, 4],
+    //         pointRadius: 0,
+    //         tension:     0,
+    //         stack:       'targets',
+    //         order:       -1,
+    //         spanGaps:    true,
+    //     })
+    // }
 
     if (inputTargetData.some(v => v !== null)) {
         datasets.push({
