@@ -69,7 +69,7 @@ class InventoryWipController extends Controller
         for ($day = 1; $day <= $now->day; $day++) {
             $date            = \Carbon\Carbon::create($year, $month, $day, 0, 0, 0, config('app.timezone'));
             $formatted       = $date->format('mdY');
-            $expectedFiles[] = "WO_{$formatted}_(6AM).xlsx";
+            $expectedFiles[] = "WO_{$formatted} (6AM).xlsx";
         }
 
         // Find fully snapshotted files for this plant
@@ -85,7 +85,7 @@ class InventoryWipController extends Controller
         $missingFiles = array_diff($expectedFiles, $fullySnapshotted);
 
         // Always re-check today in case WIP has changed
-        $todayFile = 'WO_' . $now->format('mdY') . '_(6AM).xlsx';
+        $todayFile = 'WO_' . $now->format('mdY') . ' (6AM).xlsx';
         if (!in_array($todayFile, $missingFiles)) {
             $lastSnapshotTime = DB::table('inventory_wip_snapshots')
                 ->where('plant', $plant)
@@ -135,7 +135,7 @@ class InventoryWipController extends Controller
             $grouped[$file][$process] = ($grouped[$file][$process] ?? 0.0) + (float) $row->tons;
         }
 
-        $todayFile   = 'WO_' . $now->format('mdY') . '_(6AM).xlsx';
+        $todayFile   = 'WO_' . $now->format('mdY') . ' (6AM).xlsx';
         $washRows    = DB::table('inventory_wip_snapshots')
             ->where('plant', $plant)
             ->where('daily_check_file', $todayFile)
@@ -156,7 +156,7 @@ class InventoryWipController extends Controller
     public function getWIP(Request $request, string $plant)
     {
         $now  = now(config('app.timezone'));
-        $file = 'WO_' . $now->format('mdY') . '_(6AM).xlsx';
+        $file = 'WO_' . $now->format('mdY') . ' (6AM).xlsx';
 
         // Serve from snapshot if today's already exists and is fresh
         $snapshot = $this->getSnapshot($plant, $file);
