@@ -65,80 +65,101 @@ class InventoryWipController extends Controller
         $month = $now->month;
 
         // Build expected 6AM filenames from day 1 to today
-        $expectedFiles = [];
+        $expectedFilesMap = [];
         for ($day = 1; $day <= $now->day; $day++) {
             $date            = \Carbon\Carbon::create($year, $month, $day, 0, 0, 0, config('app.timezone'));
             $formatted       = $date->format('mdY');
-            $expectedFiles[] = "WO_{$formatted} (6AM).xlsx";
+
+            $canonicalName = "WO_{$formatted} (6AM).xlsx";
+            $normalized    = $this->normalizeFileName($canonicalName);
+
+            $expectedFilesMap[$normalized] = $canonicalName;
         }
 
-        // Find fully snapshotted files for this plant
-        $fullySnapshotted = DB::table('inventory_wip_snapshots')
-            ->where('plant', $plant)
-            ->where('daily_check_file', 'like', '%6AM%')
-            ->whereYear('queried_at', $year)
-            ->whereMonth('queried_at', $month)
-            ->pluck('daily_check_file')
-            ->unique()
-            ->toArray();
+        $snapshottedRows = DB::table('inventory_wip_snapshots')
+                        ->where('plant', $plant)
+                        ->where('daily_check_file', 'like', '%6AM%')
+                        ->whereYear('queried_at', $year)
+                        ->whereMonth('queried_at', $month)
+                        ->get(['daily_check_file']);
 
-        $missingFiles = array_diff($expectedFiles, $fullySnapshotted);
+        $fullySnapshottedNormalized = $snapshottedRows
+                                ->map(fn($row) => $this->normalizeFileName($row->daily_check_file))
+                                ->unique()
+                                ->toArray();
 
-        // Always re-check today in case WIP has changed
-        $todayFile = 'WO_' . $now->format('mdY') . ' (6AM).xlsx';
-        if (!in_array($todayFile, $missingFiles)) {
+        $missingNormalizedKeys = array_diff(array_keys($expectedFilesMap), $fullySnapshottedNormalized);
+
+        $todayCanonical  = 'WO_' . $now->format('mdY') . ' (6AM).xlsx';
+        $todayNormalized = $this->normalizeFileName($todayCanonical);
+
+        if (!in_array($todayNormalized, $missingNormalizedKeys)) {
+            $todayPattern = $now->format('mdY');
+
             $lastSnapshotTime = DB::table('inventory_wip_snapshots')
-                ->where('plant', $plant)
-                ->where('daily_check_file', $todayFile)
-                ->max('queried_at');
+                            ->where('plant', $plant)
+                            ->where('daily_check_file', 'like', "%{$todayPattern}%")
+                            ->where('daily_check_file', 'like', '%6AM%')
+                            ->max('queried_at');
 
             if (!$lastSnapshotTime || $now->diffInMinutes($lastSnapshotTime) > 30) {
-                $missingFiles[] = $todayFile;
-                Cache::forget('inventory_wip:snapshot:' . md5($plant . $todayFile));
+                $missingNormalizedKeys[] = $todayNormalized;
+
+                Cache::forget('inventory_wip:snapshot:' . md5($plant . $todayCanonical));
                 DB::table('inventory_wip_snapshots')
                     ->where('plant', $plant)
-                    ->where('daily_check_file', $todayFile)
+                    ->where('daily_check_file', 'like', "%{$todayPattern}%")
+                    ->where('daily_check_file', 'like', '%6AM%')
                     ->delete();
             }
         }
 
-        if (!empty($missingFiles)) {
+        if (!empty($missingNormalizedKeys)) {
             $availableFiles = $this->fetchAvailableFiles();
-            $this->backfillMissingDays(
-                array_values($missingFiles),
-                $availableFiles,
-                $plant,
-            );
+
+            $filesToBackfill = [];
+            foreach ($availableFiles as $apiFile) {
+                $normalizedApiFile = $this->normalizeFileName($apiFile);
+                if (in_array($normalizedApiFile, $missingNormalizedKeys)) {
+                    $filesToBackfill[] = $apiFile;
+                }
+            }
+
+            if (!empty($filesToBackfill)) {
+                $this->backfillMissingDays($filesToBackfill, $availableFiles, $plant);
+            }
         }
 
         // Fetch all snapshot rows for this plant
         $rows = DB::table('inventory_wip_snapshots')
-            ->where('plant', $plant)
-            ->where('daily_check_file', 'like', '%6AM%')
-            ->whereYear('queried_at', $year)
-            ->whereMonth('queried_at', $month)
-            ->get(['daily_check_file', 'process', 'area', 'tons'])
-            ->toArray();
+                ->where('plant', $plant)
+                ->where('daily_check_file', 'like', '%6AM%')
+                ->whereYear('queried_at', $year)
+                ->whereMonth('queried_at', $month)
+                ->get(['daily_check_file', 'process', 'area', 'tons'])
+                ->toArray();
 
-        // Initialize all expected days so empty ones appear in graph
         $grouped = [];
-        foreach ($expectedFiles as $file) {
-            $grouped[$file] = [];
+        foreach ($expectedFilesMap as $canonical) {
+            $grouped[$canonical] = [];
         }
 
         foreach ($rows as $row) {
-            $file    = $row->daily_check_file;
-            $process = $row->process;
+            $normalizedRowFile = $this->normalizeFileName($row->daily_check_file);
 
-            if (!array_key_exists($file, $grouped)) continue;
+            if (!isset($expectedFilesMap[$normalizedRowFile])) continue;
 
-            $grouped[$file][$process] = ($grouped[$file][$process] ?? 0.0) + (float) $row->tons;
+            $canonicalKey = $expectedFilesMap[$normalizedRowFile];
+            $process      = $row->process;
+
+            $grouped[$canonicalKey][$process] = ($grouped[$canonicalKey][$process] ?? 0.0) + (float) $row->tons;
         }
 
-        $todayFile   = 'WO_' . $now->format('mdY') . ' (6AM).xlsx';
-        $washRows    = DB::table('inventory_wip_snapshots')
+        $todayPattern = $now->format('mdY');
+        $washRows     = DB::table('inventory_wip_snapshots')
             ->where('plant', $plant)
-            ->where('daily_check_file', $todayFile)
+            ->where('daily_check_file', 'like', "%{$todayPattern}%")
+            ->where('daily_check_file', 'like', '%6AM%')
             ->where('process', 'WASH')
             ->get(['area', 'tons', 'work_order_count'])
             ->map(fn($row) => (array) $row)
@@ -148,9 +169,8 @@ class InventoryWipController extends Controller
         return response()->json([
             'graph'        => $grouped,
             'wash_summary' => $washRows,
-            'wash_date'    => $todayFile,
+            'wash_date'    => $todayCanonical,
         ]);
-
     }
 
     public function getWIP(Request $request, string $plant)
@@ -281,11 +301,11 @@ class InventoryWipController extends Controller
     }
 
     private function backfillMissingDays(
-        array  $missingFiles,
+        array  $filesToBackfill,
         array  $availableFiles,
         string $plant,
     ): void {
-        foreach ($missingFiles as $file) {
+        foreach ($filesToBackfill as $file) {
             if (!in_array($file, $availableFiles)) continue;
 
             try {
@@ -337,5 +357,11 @@ class InventoryWipController extends Controller
         }
 
         return $base;
+    }
+
+    private function normalizeFileName(string $filename): string
+    {
+        $nameWithoutExt = pathinfo($filename, PATHINFO_FILENAME);
+        return strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $nameWithoutExt));
     }
 }
