@@ -35,7 +35,7 @@
             </div>
             <div v-if="m.isCurrent && m.yesterdayTotal !== null" class="target-row">
                 <span class="target-label">Yesterday</span>
-                <span class="target-val">{{ Number(m.yesterdayTotal).toFixed(2) }} t</span>
+                <span class="target-val">{{ Number(m.yesterdayTotal).toFixed(2) }} pcs</span>
                 <span
                     v-if="m.dailyTarget > 0"
                     class="target-pct"
